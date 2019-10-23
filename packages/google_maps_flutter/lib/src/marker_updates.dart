@@ -36,16 +36,47 @@ class _MarkerUpdates {
         .map(idToCurrentMarker)
         .toSet();
 
-    /// Returns `true` if [current] is not equals to previous one with the
-    /// same id.
-    bool hasChanged(Marker current) {
+    /// Returns `true` if [filteredMarker] contains properties that should be
+    /// sent through the platform channel
+    bool hasChanged(Marker filteredMarker) {
+      return filteredMarker.alpha != null ||
+          filteredMarker.anchor != null ||
+          filteredMarker.draggable != null ||
+          filteredMarker.flat != null ||
+          filteredMarker.icon != null ||
+          filteredMarker.infoWindow != null ||
+          filteredMarker.position != null ||
+          filteredMarker.rotation != null ||
+          filteredMarker.visible != null ||
+          filteredMarker.zIndex != null;
+    }
+
+    /// Returns a [Marker] that only contains the properties of [current] that
+    /// changed from [previousMarkers]
+    Marker filterChanges(Marker current) {
       final Marker previous = previousMarkers[current.markerId];
-      return current != previous;
+
+      return Marker(
+        markerId: current.markerId,
+        alpha: current.alpha != previous.alpha ? current.alpha : null,
+        anchor: current.anchor != previous.anchor ? current.anchor : null,
+        draggable: current.draggable != previous.draggable ? current.draggable : null,
+        flat: current.flat != previous.flat ? current.flat : null,
+        icon: current.icon != previous.icon ? current.icon : null,
+        infoWindow: current.infoWindow != previous.infoWindow ? current.infoWindow : null,
+        position: current.position != previous.position ? current.position : null,
+        rotation: current.rotation != previous.rotation ? current.rotation : null,
+        visible: current.visible != previous.visible ? current.visible : null,
+        zIndex: current.zIndex != previous.zIndex ? current.zIndex : null,
+        onTap: current.onTap != previous.onTap ? current.onTap : null,
+        onDragEnd: current.onDragEnd != previous.onDragEnd ? current.onDragEnd : null,
+      );
     }
 
     final Set<Marker> _markersToChange = currentMarkerIds
         .intersection(prevMarkerIds)
         .map(idToCurrentMarker)
+        .map(filterChanges)
         .where(hasChanged)
         .toSet();
 
