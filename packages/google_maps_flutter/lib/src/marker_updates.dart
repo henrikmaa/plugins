@@ -39,13 +39,44 @@ class _MarkerUpdates {
     /// Returns `true` if [current] is not equals to previous one with the
     /// same id.
     bool hasChanged(Marker current) {
+      return current.alpha != null ||
+          current.anchor != null ||
+          current.draggable != null ||
+          current.flat != null ||
+          current.icon != null ||
+          current.infoWindow != null ||
+          current.position != null ||
+          current.rotation != null ||
+          current.visible != null ||
+          current.zIndex != null;
+    }
+
+    /// Returns `true` if [current] is not equals to previous one with the
+    /// same id.
+    Marker filterChanges(Marker current) {
       final Marker previous = previousMarkers[current.markerId];
-      return current != previous;
+
+      return Marker(
+        markerId: current.markerId,
+        alpha: current.alpha != previous.alpha ? current.alpha : null,
+        anchor: current.anchor != previous.alpha ? current.anchor : null,
+        draggable: current.draggable != previous.draggable ? current.draggable : null,
+        flat: current.flat != previous.flat ? current.flat : null,
+        icon: current.icon != previous.icon ? current.icon : null,
+        infoWindow: current.infoWindow != previous.infoWindow ? current.infoWindow : null,
+        position: current.position != previous.position ? current.position : null,
+        rotation: current.rotation != previous.rotation ? current.rotation : null,
+        visible: current.visible != previous.visible ? current.visible : null,
+        zIndex: current.zIndex != previous.zIndex ? current.zIndex : null,
+//          onTap: current.onTap,
+//          onDragEnd: current.onDragEnd
+      );
     }
 
     final Set<Marker> _markersToChange = currentMarkerIds
         .intersection(prevMarkerIds)
         .map(idToCurrentMarker)
+        .map(filterChanges)
         .where(hasChanged)
         .toSet();
 
