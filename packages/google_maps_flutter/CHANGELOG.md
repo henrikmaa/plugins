@@ -1,3 +1,8 @@
+## 0.5.21+9
+
+* Performance improvement - only pass the properties of a Marker that changed between updates to
+  platform
+
 ## 0.5.21+8
 
 * Add NS_ASSUME_NONNULL_* macro to reduce iOS compiler warnings.
