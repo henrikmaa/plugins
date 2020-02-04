@@ -122,7 +122,10 @@ static void InterpretMarkerOptions(NSDictionary* data, id<FLTGoogleMapMarkerOpti
   InterpretInfoWindow(sink, data);
   NSArray* position = data[@"position"];
   if (position) {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration: 0];
     [sink setPosition:ToLocation(position)];
+    [CATransaction commit];
   }
   NSNumber* rotation = data[@"rotation"];
   if (rotation) {
