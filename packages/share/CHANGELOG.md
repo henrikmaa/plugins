@@ -1,3 +1,56 @@
+## 0.6.4+3
+
+* Post-v2 Android embedding cleanup.
+
+## 0.6.4+2
+
+* Update lower bound of dart dependency to 2.1.0.
+
+## 0.6.4+1
+
+* Declare API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
+
+## 0.6.4
+
+* Remove Android dependencies fallback.
+* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Fix CocoaPods podspec lint warnings.
+
+## 0.6.3+8
+
+* Replace deprecated `getFlutterEngine` call on Android.
+
+## 0.6.3+7
+
+* Updated gradle version of example.
+
+## 0.6.3+6
+
+* Make the pedantic dev_dependency explicit.
+
+## 0.6.3+5
+
+* Remove the deprecated `author:` field from pubspec.yaml
+* Migrate the plugin to the pubspec platforms manifest.
+* Require Flutter SDK 1.10.0 or greater.
+
+## 0.6.3+4
+
+* Fix pedantic lints. This shouldn't affect existing functionality.
+
+## 0.6.3+3
+
+* README update.
+
+## 0.6.3+2
+
+* Remove AndroidX warnings.
+
+## 0.6.3+1
+
+* Include lifecycle dependency as a compileOnly one on Android to resolve
+  potential version conflicts with other transitive libraries.
+
 ## 0.6.3
 
 * Support the v2 Android embedder.

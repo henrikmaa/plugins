@@ -5,26 +5,38 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart' show required;
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'method_channel_url_launcher.dart';
 
 /// The interface that implementations of url_launcher must implement.
 ///
-/// Platform implementations that live in a separate package should extend this
-/// class rather than implement it as `url_launcher` does not consider newly
-/// added methods to be breaking changes. Extending this class (using `extends`)
-/// ensures that the subclass will get the default implementation, while
-/// platform implementations that `implements` this interface will be broken by
-/// newly added [UrlLauncherPlatform] methods.
-abstract class UrlLauncherPlatform {
+/// Platform implementations should extend this class rather than implement it as `url_launcher`
+/// does not consider newly added methods to be breaking changes. Extending this class
+/// (using `extends`) ensures that the subclass will get the default implementation, while
+/// platform implementations that `implements` this interface will be broken by newly added
+/// [UrlLauncherPlatform] methods.
+abstract class UrlLauncherPlatform extends PlatformInterface {
+  /// Constructs a UrlLauncherPlatform.
+  UrlLauncherPlatform() : super(token: _token);
+
+  static final Object _token = Object();
+
+  static UrlLauncherPlatform _instance = MethodChannelUrlLauncher();
+
   /// The default instance of [UrlLauncherPlatform] to use.
   ///
-  /// Platform-specific plugins should override this with their own
-  /// platform-specific class that extends [UrlLauncherPlatform] when they
-  /// register themselves.
-  ///
   /// Defaults to [MethodChannelUrlLauncher].
-  static UrlLauncherPlatform instance = MethodChannelUrlLauncher();
+  static UrlLauncherPlatform get instance => _instance;
+
+  /// Platform-specific plugins should set this with their own platform-specific
+  /// class that extends [UrlLauncherPlatform] when they register themselves.
+  // TODO(amirh): Extract common platform interface logic.
+  // https://github.com/flutter/flutter/issues/43368
+  static set instance(UrlLauncherPlatform instance) {
+    PlatformInterface.verifyToken(instance, _token);
+    _instance = instance;
+  }
 
   /// Returns `true` if this platform is able to launch [url].
   Future<bool> canLaunch(String url) {
