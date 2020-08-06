@@ -222,20 +222,12 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   _GoogleMapOptions _googleMapOptions;
 
+  Map<String, dynamic> _creationParams;
+
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> creationParams = <String, dynamic>{
-      'initialCameraPosition': widget.initialCameraPosition?.toMap(),
-      'options': _googleMapOptions.toMap(),
-      'markersToAdd': serializeMarkerSet(widget.markers),
-      'polygonsToAdd': serializePolygonSet(widget.polygons),
-      'polylinesToAdd': serializePolylineSet(widget.polylines),
-      'circlesToAdd': serializeCircleSet(widget.circles),
-      '_webOnlyMapCreationId': _webOnlyMapCreationId,
-    };
-
     return _googleMapsFlutterPlatform.buildView(
-      creationParams,
+      _creationParams,
       widget.gestureRecognizers,
       onPlatformViewCreated,
     );
@@ -249,6 +241,15 @@ class _GoogleMapState extends State<GoogleMap> {
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _creationParams = <String, dynamic>{
+      'initialCameraPosition': widget.initialCameraPosition?.toMap(),
+      'options': _googleMapOptions.toMap(),
+      'markersToAdd': serializeMarkerSet(widget.markers),
+      'polygonsToAdd': serializePolygonSet(widget.polygons),
+      'polylinesToAdd': serializePolylineSet(widget.polylines),
+      'circlesToAdd': serializeCircleSet(widget.circles),
+      '_webOnlyMapCreationId': _webOnlyMapCreationId,
+    };
   }
 
   @override

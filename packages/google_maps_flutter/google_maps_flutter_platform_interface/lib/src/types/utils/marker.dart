@@ -10,13 +10,13 @@ Map<MarkerId, Marker> keyByMarkerId(Iterable<Marker> markers) {
     return <MarkerId, Marker>{};
   }
   return Map<MarkerId, Marker>.fromEntries(markers.map((Marker marker) =>
-      MapEntry<MarkerId, Marker>(marker.markerId, marker.clone())));
+      MapEntry<MarkerId, Marker>(marker.markerId, marker)));
 }
 
 /// Converts a Set of Markers into something serializable in JSON.
-List<Map<String, dynamic>> serializeMarkerSet(Set<Marker> markers) {
+List<Map<String, dynamic>> serializeMarkerSet(Set<Marker> markers, [Map<MarkerId, Marker> previousMarkers = const {}]) {
   if (markers == null) {
     return null;
   }
-  return markers.map<Map<String, dynamic>>((Marker m) => m.toJson()).toList();
+  return markers.map<Map<String, dynamic>>((Marker m) => m.toJson(previousMarkers[m.markerId])).toList();
 }

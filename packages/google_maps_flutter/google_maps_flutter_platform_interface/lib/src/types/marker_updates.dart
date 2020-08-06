@@ -89,6 +89,7 @@ class MarkerUpdates {
     markersToAdd = _markersToAdd;
     markerIdsToRemove = _markerIdsToRemove;
     markersToChange = _markersToChange;
+    _previousMarkers = previousMarkers;
   }
 
   /// Set of Markers to be added in this update.
@@ -99,6 +100,8 @@ class MarkerUpdates {
 
   /// Set of Markers to be changed in this update.
   Set<Marker> markersToChange;
+
+  Map<MarkerId, Marker> _previousMarkers;
 
   /// Converts this object to something serializable in JSON.
   Map<String, dynamic> toJson() {
@@ -111,7 +114,7 @@ class MarkerUpdates {
     }
 
     addIfNonNull('markersToAdd', serializeMarkerSet(markersToAdd));
-    addIfNonNull('markersToChange', serializeMarkerSet(markersToChange));
+    addIfNonNull('markersToChange', serializeMarkerSet(markersToChange, _previousMarkers));
     addIfNonNull('markerIdsToRemove',
         markerIdsToRemove.map<dynamic>((MarkerId m) => m.value).toList());
 

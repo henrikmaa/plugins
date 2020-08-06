@@ -268,7 +268,7 @@ class Marker {
   Marker clone() => copyWith();
 
   /// Converts this object to something serializable in JSON.
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson([Marker previous]) {
     final Map<String, dynamic> json = <String, dynamic>{};
 
     void addIfPresent(String fieldName, dynamic value) {
@@ -283,7 +283,7 @@ class Marker {
     addIfPresent('consumeTapEvents', consumeTapEvents);
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
-    addIfPresent('icon', icon?.toJson());
+    if (icon != previous?.icon) addIfPresent('icon', icon?.toJson());
     addIfPresent('infoWindow', infoWindow?._toJson());
     addIfPresent('position', position?.toJson());
     addIfPresent('rotation', rotation);
