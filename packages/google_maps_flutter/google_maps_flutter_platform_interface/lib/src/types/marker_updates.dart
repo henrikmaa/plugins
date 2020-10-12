@@ -15,21 +15,11 @@ import 'utils/marker.dart';
 // (Do not re-export)
 class MarkerUpdates {
   /// Computes [MarkerUpdates] given previous and current [Marker]s.
-  MarkerUpdates.from(Set<Marker> previous, Set<Marker> current) {
-    if (previous == null) {
-      previous = Set<Marker>.identity();
-    }
-
-    if (current == null) {
-      current = Set<Marker>.identity();
-    }
-
-    final Map<MarkerId, Marker> previousMarkers = keyByMarkerId(previous);
-    final Map<MarkerId, Marker> currentMarkers = keyByMarkerId(current);
-
-    final Set<MarkerId> prevMarkerIds = previousMarkers.keys.toSet();
-    final Set<MarkerId> currentMarkerIds = currentMarkers.keys.toSet();
-
+  MarkerUpdates.from(
+      Set<MarkerId> prevMarkerIds,
+      Map<MarkerId, Marker> previousMarkers,
+      Set<MarkerId> currentMarkerIds,
+      Map<MarkerId, Marker> currentMarkers) {
     Marker idToCurrentMarker(MarkerId id) {
       return currentMarkers[id];
     }
@@ -65,13 +55,18 @@ class MarkerUpdates {
       return Marker(
         markerId: current.markerId,
         alpha: current.alpha != previous.alpha ? current.alpha : null,
-        anchor: current.anchor != previous.alpha ? current.anchor : null,
-        draggable: current.draggable != previous.draggable ? current.draggable : null,
+        anchor: current.anchor != previous.anchor ? current.anchor : null,
+        draggable:
+            current.draggable != previous.draggable ? current.draggable : null,
         flat: current.flat != previous.flat ? current.flat : null,
         icon: current.icon != previous.icon ? current.icon : null,
-        infoWindow: current.infoWindow != previous.infoWindow ? current.infoWindow : null,
-        position: current.position != previous.position ? current.position : null,
-        rotation: current.rotation != previous.rotation ? current.rotation : null,
+        infoWindow: current.infoWindow != previous.infoWindow
+            ? current.infoWindow
+            : null,
+        position:
+            current.position != previous.position ? current.position : null,
+        rotation:
+            current.rotation != previous.rotation ? current.rotation : null,
         visible: current.visible != previous.visible ? current.visible : null,
         zIndex: current.zIndex != previous.zIndex ? current.zIndex : null,
 //          onTap: current.onTap,
@@ -114,7 +109,8 @@ class MarkerUpdates {
     }
 
     addIfNonNull('markersToAdd', serializeMarkerSet(markersToAdd));
-    addIfNonNull('markersToChange', serializeMarkerSet(markersToChange, _previousMarkers));
+    addIfNonNull('markersToChange',
+        serializeMarkerSet(markersToChange, _previousMarkers));
     addIfNonNull('markerIdsToRemove',
         markerIdsToRemove.map<dynamic>((MarkerId m) => m.value).toList());
 
