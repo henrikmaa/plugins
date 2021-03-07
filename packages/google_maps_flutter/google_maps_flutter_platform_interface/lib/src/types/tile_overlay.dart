@@ -109,7 +109,7 @@ class TileOverlay implements MapsObject {
   TileOverlay clone() => copyWith();
 
   /// Converts this object to JSON.
-  Object toJson() {
+  Object toJson([MapsObject? previous]) {
     final Map<String, Object> json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {

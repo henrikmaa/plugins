@@ -17,10 +17,10 @@ class MapsObjectUpdates<T extends MapsObject> {
   /// dictionary. E.g., 'circle' will give 'circlesToAdd', 'circlesToUpdate',
   /// 'circleIdsToRemove'.
   MapsObjectUpdates.from(
-    Set<T> previous,
-    Set<T> current, {
-    required this.objectName,
-  }) {
+      Set<T> previous,
+      Set<T> current, {
+        required this.objectName,
+      }) {
     final Map<MapsObjectId<T>, T> previousObjects = keyByMapsObjectId(previous);
     final Map<MapsObjectId<T>, T> currentObjects = keyByMapsObjectId(current);
 
@@ -54,6 +54,8 @@ class MapsObjectUpdates<T extends MapsObject> {
         .map(_idToCurrentObject)
         .where(hasChanged)
         .toSet();
+
+    _previousObjects = previousObjects;
   }
 
   /// The name of the objects being updated, for use in serialization.
@@ -78,6 +80,7 @@ class MapsObjectUpdates<T extends MapsObject> {
     return _objectsToChange;
   }
 
+  late Map<MapsObjectId<T>, T> _previousObjects;
   late Set<T> _objectsToChange;
 
   /// Converts this object to JSON.
@@ -92,7 +95,7 @@ class MapsObjectUpdates<T extends MapsObject> {
 
     addIfNonNull('${objectName}sToAdd', serializeMapsObjectSet(_objectsToAdd));
     addIfNonNull(
-        '${objectName}sToChange', serializeMapsObjectSet(_objectsToChange));
+        '${objectName}sToChange', serializeMapsObjectSet(_objectsToChange, _previousObjects));
     addIfNonNull(
         '${objectName}IdsToRemove',
         _objectIdsToRemove

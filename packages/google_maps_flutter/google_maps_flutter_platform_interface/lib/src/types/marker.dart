@@ -249,7 +249,7 @@ class Marker implements MapsObject {
   Marker clone() => copyWith();
 
   /// Converts this object to something serializable in JSON.
-  Object toJson() {
+  Object toJson([MapsObject? previous]) {
     final Map<String, Object> json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
@@ -264,7 +264,9 @@ class Marker implements MapsObject {
     addIfPresent('consumeTapEvents', consumeTapEvents);
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
-    addIfPresent('icon', icon.toJson());
+    if (icon != (previous as Marker?)?.icon) {
+      addIfPresent('icon', icon.toJson());
+    }
     addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('position', position.toJson());
     addIfPresent('rotation', rotation);

@@ -45,5 +45,5 @@ abstract class MapsObject<T> {
   T clone();
 
   /// Converts this object to something serializable in JSON.
-  Object toJson();
+  Object toJson([MapsObject<T>? previous]);
 }

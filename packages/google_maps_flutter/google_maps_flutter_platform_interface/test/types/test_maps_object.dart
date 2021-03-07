@@ -21,7 +21,7 @@ class TestMapsObject implements MapsObject {
   }
 
   @override
-  Object toJson() {
+  Object toJson([MapsObject? previous]) {
     return <String, Object>{'id': mapsId.value};
   }
 
