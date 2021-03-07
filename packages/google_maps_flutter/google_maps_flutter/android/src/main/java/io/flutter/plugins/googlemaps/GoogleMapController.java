@@ -119,7 +119,7 @@ final class GoogleMapController
   }
 
   private void animateCamera(CameraUpdate cameraUpdate) {
-    googleMap.animateCamera(cameraUpdate);
+    googleMap.animateCamera(cameraUpdate, 250, null);
   }
 
   private CameraPosition getCameraPosition() {
