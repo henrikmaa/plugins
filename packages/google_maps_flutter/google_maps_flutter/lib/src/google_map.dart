@@ -307,9 +307,10 @@ class _GoogleMapState extends State<GoogleMap> {
   void _updateMarkers() async {
     final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
+    final keyedMarkers = keyByMarkerId(widget.markers);
     controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers));
-    _markers = keyByMarkerId(widget.markers);
+        MarkerUpdates.from(_markers, keyedMarkers));
+    _markers = keyedMarkers;
   }
 
   void _updatePolygons() async {

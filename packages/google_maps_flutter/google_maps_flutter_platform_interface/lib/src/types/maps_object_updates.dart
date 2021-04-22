@@ -11,19 +11,32 @@ import 'utils/maps_object.dart';
 
 /// Update specification for a set of objects.
 class MapsObjectUpdates<T extends MapsObject> {
+  MapsObjectUpdates.from(
+    Set<T> previous,
+    Set<T> current, {
+    required this.objectName,
+  }) {
+    final Map<MapsObjectId<T>, T> previousObjects = keyByMapsObjectId(previous);
+    final Map<MapsObjectId<T>, T> currentObjects = keyByMapsObjectId(current);
+
+    _apply(previousObjects, currentObjects);
+  }
+
   /// Computes updates given previous and current object sets.
   ///
   /// [objectName] is the prefix to use when serializing the updates into a JSON
   /// dictionary. E.g., 'circle' will give 'circlesToAdd', 'circlesToUpdate',
   /// 'circleIdsToRemove'.
-  MapsObjectUpdates.from(
-      Set<T> previous,
-      Set<T> current, {
-        required this.objectName,
-      }) {
-    final Map<MapsObjectId<T>, T> previousObjects = keyByMapsObjectId(previous);
-    final Map<MapsObjectId<T>, T> currentObjects = keyByMapsObjectId(current);
+  MapsObjectUpdates.mapFrom(
+    Map<MapsObjectId<T>, T> previousObjects,
+    Map<MapsObjectId<T>, T> currentObjects, {
+    required this.objectName,
+  }) {
+    _apply(previousObjects, currentObjects);
+  }
 
+  void _apply(Map<MapsObjectId<T>, T> previousObjects,
+      Map<MapsObjectId<T>, T> currentObjects) {
     final Set<MapsObjectId<T>> previousObjectIds = previousObjects.keys.toSet();
     final Set<MapsObjectId<T>> currentObjectIds = currentObjects.keys.toSet();
 
@@ -94,8 +107,8 @@ class MapsObjectUpdates<T extends MapsObject> {
     }
 
     addIfNonNull('${objectName}sToAdd', serializeMapsObjectSet(_objectsToAdd));
-    addIfNonNull(
-        '${objectName}sToChange', serializeMapsObjectSet(_objectsToChange, _previousObjects));
+    addIfNonNull('${objectName}sToChange',
+        serializeMapsObjectSet(_objectsToChange, _previousObjects));
     addIfNonNull(
         '${objectName}IdsToRemove',
         _objectIdsToRemove
