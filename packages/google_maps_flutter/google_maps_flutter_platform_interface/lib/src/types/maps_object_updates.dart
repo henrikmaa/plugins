@@ -4,6 +4,7 @@
 
 import 'dart:ui' show hashValues, hashList;
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart' show objectRuntimeType, setEquals;
 
 import 'maps_object.dart';
@@ -37,8 +38,8 @@ class MapsObjectUpdates<T extends MapsObject> {
 
   void _apply(Map<MapsObjectId<T>, T> previousObjects,
       Map<MapsObjectId<T>, T> currentObjects) {
-    final Set<MapsObjectId<T>> previousObjectIds = previousObjects.keys.toSet();
-    final Set<MapsObjectId<T>> currentObjectIds = currentObjects.keys.toSet();
+    final Set<MapsObjectId<T>> previousObjectIds = MapKeySet(previousObjects);
+    final Set<MapsObjectId<T>> currentObjectIds = MapKeySet(currentObjects);
 
     /// Maps an ID back to a [T] in [currentObjects].
     ///
@@ -55,18 +56,20 @@ class MapsObjectUpdates<T extends MapsObject> {
         .map(_idToCurrentObject)
         .toSet();
 
-    // Returns `true` if [current] is not equals to previous one with the
-    // same id.
-    bool hasChanged(T current) {
-      final T? previous = previousObjects[current.mapsId as MapsObjectId<T>];
-      return current != previous;
-    }
 
-    _objectsToChange = currentObjectIds
-        .intersection(previousObjectIds)
-        .map(_idToCurrentObject)
-        .where(hasChanged)
-        .toSet();
+    _objectsToChange = Set();
+
+    for (final current in currentObjects.values) {
+      final previous = previousObjects[current.mapsId];
+
+      if (previous != null) {
+        final hasChanged = !identical(current, previous) && current != previous;
+
+        if(hasChanged){
+          _objectsToChange.add(current);
+        }
+      }
+    }
 
     _previousObjects = previousObjects;
   }
