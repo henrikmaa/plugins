@@ -139,4 +139,8 @@ class MapsObjectUpdates<T extends MapsObject> {
         'remove: $objectIdsToRemove, '
         'change: $objectsToChange)';
   }
+
+  bool get isNotEmpty =>
+      objectsToAdd.isNotEmpty || objectsToChange.isNotEmpty ||
+          objectIdsToRemove.isNotEmpty;
 }
