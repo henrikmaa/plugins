@@ -293,8 +293,7 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void _updateOptions() async {
     final _GoogleMapOptions newOptions = _GoogleMapOptions.fromWidget(widget);
-    final Map<String, dynamic> updates =
-        _googleMapOptions.updatesMap(newOptions);
+    final Map<String, dynamic> updates = newOptions.toMap(_googleMapOptions);
     if (updates.isEmpty) {
       return;
     }
@@ -508,47 +507,49 @@ class _GoogleMapOptions {
 
   final bool buildingsEnabled;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap([_GoogleMapOptions? filterOnlyDifferent]) {
     return <String, dynamic>{
-      'compassEnabled': compassEnabled,
-      'mapToolbarEnabled': mapToolbarEnabled,
-      'cameraTargetBounds': cameraTargetBounds.toJson(),
-      'mapType': mapType.index,
-      'minMaxZoomPreference': minMaxZoomPreference.toJson(),
-      'rotateGesturesEnabled': rotateGesturesEnabled,
-      'scrollGesturesEnabled': scrollGesturesEnabled,
-      'tiltGesturesEnabled': tiltGesturesEnabled,
-      'zoomControlsEnabled': zoomControlsEnabled,
-      'zoomGesturesEnabled': zoomGesturesEnabled,
-      'liteModeEnabled': liteModeEnabled,
-      'trackCameraPosition': trackCameraPosition,
-      'myLocationEnabled': myLocationEnabled,
-      'myLocationButtonEnabled': myLocationButtonEnabled,
-      'padding': <double>[
+      if (compassEnabled != filterOnlyDifferent?.compassEnabled)
+        'compassEnabled': compassEnabled,
+      if (mapToolbarEnabled != filterOnlyDifferent?.mapToolbarEnabled)
+        'mapToolbarEnabled': mapToolbarEnabled,
+      if (cameraTargetBounds != filterOnlyDifferent?.cameraTargetBounds)
+        'cameraTargetBounds': cameraTargetBounds.toJson(),
+      if (mapType != filterOnlyDifferent?.mapType)
+        'mapType': mapType.index,
+      if (minMaxZoomPreference != filterOnlyDifferent?.minMaxZoomPreference)
+        'minMaxZoomPreference': minMaxZoomPreference.toJson(),
+      if (rotateGesturesEnabled != filterOnlyDifferent?.rotateGesturesEnabled)
+        'rotateGesturesEnabled': rotateGesturesEnabled,
+      if (scrollGesturesEnabled != filterOnlyDifferent?.scrollGesturesEnabled)
+        'scrollGesturesEnabled': scrollGesturesEnabled,
+      if (tiltGesturesEnabled != filterOnlyDifferent?.tiltGesturesEnabled)
+        'tiltGesturesEnabled': tiltGesturesEnabled,
+      if (zoomControlsEnabled != filterOnlyDifferent?.zoomControlsEnabled)
+        'zoomControlsEnabled': zoomControlsEnabled,
+      if (zoomGesturesEnabled != filterOnlyDifferent?.zoomGesturesEnabled)
+        'zoomGesturesEnabled': zoomGesturesEnabled,
+      if (liteModeEnabled != filterOnlyDifferent?.liteModeEnabled)
+        'liteModeEnabled': liteModeEnabled,
+      if (trackCameraPosition != filterOnlyDifferent?.trackCameraPosition)
+        'trackCameraPosition': trackCameraPosition,
+      if (myLocationEnabled != filterOnlyDifferent?.myLocationEnabled)
+        'myLocationEnabled': myLocationEnabled,
+      if (myLocationButtonEnabled != filterOnlyDifferent?.myLocationButtonEnabled)
+        'myLocationButtonEnabled': myLocationButtonEnabled,
+      if (padding != filterOnlyDifferent?.padding)
+        'padding': <double>[
         padding.top,
         padding.left,
         padding.bottom,
         padding.right,
       ],
-      'indoorEnabled': indoorViewEnabled,
-      'trafficEnabled': trafficEnabled,
-      'buildingsEnabled': buildingsEnabled,
+      if (indoorViewEnabled != filterOnlyDifferent?.indoorViewEnabled)
+        'indoorEnabled': indoorViewEnabled,
+      if (trafficEnabled != filterOnlyDifferent?.trafficEnabled)
+        'trafficEnabled': trafficEnabled,
+      if (buildingsEnabled != filterOnlyDifferent?.buildingsEnabled)
+        'buildingsEnabled': buildingsEnabled,
     };
-  }
-
-  Map<String, dynamic> updatesMap(_GoogleMapOptions newOptions) {
-    final Map<String, dynamic> prevOptionsMap = toMap();
-
-    bool isSameWithPrevious(String key, dynamic value) {
-      final previous = prevOptionsMap[key];
-
-      if (value is List && previous is List) {
-        return ListEquality().equals(value, previous);
-      } else {
-        return value == previous;
-      }
-    }
-
-    return newOptions.toMap()..removeWhere(isSameWithPrevious);
   }
 }
