@@ -51,12 +51,7 @@ class MapsObjectUpdates<T extends MapsObject> {
 
     _objectIdsToRemove = previousObjectIds.difference(currentObjectIds);
 
-    _objectsToAdd = currentObjectIds
-        .difference(previousObjectIds)
-        .map(_idToCurrentObject)
-        .toSet();
-
-
+    _objectsToAdd = Set();
     _objectsToChange = Set();
 
     for (final current in currentObjects.values) {
@@ -65,9 +60,11 @@ class MapsObjectUpdates<T extends MapsObject> {
       if (previous != null) {
         final hasChanged = !identical(current, previous) && current != previous;
 
-        if(hasChanged){
+        if (hasChanged) {
           _objectsToChange.add(current);
         }
+      } else {
+        _objectsToAdd.add(current);
       }
     }
 
