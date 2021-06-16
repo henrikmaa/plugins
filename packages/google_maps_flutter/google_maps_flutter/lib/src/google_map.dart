@@ -339,10 +339,10 @@ class _GoogleMapState extends State<GoogleMap> {
     _circles = keyByCircleId(widget.circles);
   }
 
-  void _updateTileOverlays(GoogleMap oldWidget) async {
+  void _updateTileOverlays(GoogleMap? oldWidget) async {
     final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
-    if (oldWidget.tileOverlays != widget.tileOverlays)
+    if (oldWidget?.tileOverlays != widget.tileOverlays)
       controller._updateTileOverlays(widget.tileOverlays);
   }
 
@@ -353,7 +353,7 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    _updateTileOverlays();
+    _updateTileOverlays(null);
     final MapCreatedCallback? onMapCreated = widget.onMapCreated;
     if (onMapCreated != null) {
       onMapCreated(controller);
