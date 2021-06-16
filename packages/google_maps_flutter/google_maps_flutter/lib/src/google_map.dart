@@ -4,7 +4,6 @@
 
 part of google_maps_flutter;
 
-
 /// Callback method for when the map is ready to be used.
 ///
 /// Pass to [GoogleMap.onMapCreated] to receive a [GoogleMapController] when the
@@ -289,7 +288,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _updatePolygons();
     _updatePolylines();
     _updateCircles();
-    _updateTileOverlays();
+    _updateTileOverlays(oldWidget);
   }
 
   void _updateOptions() async {
@@ -309,39 +308,42 @@ class _GoogleMapState extends State<GoogleMap> {
     final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
     final keyedMarkers = keyByMarkerId(widget.markers);
-    controller._updateMarkers(
-        MarkerUpdates.from(_markers, keyedMarkers));
+    final update = MarkerUpdates.from(_markers, keyedMarkers);
+    if (update.isNotEmpty) controller._updateMarkers(update);
     _markers = keyedMarkers;
   }
 
   void _updatePolygons() async {
     final GoogleMapController controller = await _controller.future;
+    final update =
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons);
     // ignore: unawaited_futures
-    controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons));
+    if (update.isNotEmpty) controller._updatePolygons(update);
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   void _updatePolylines() async {
     final GoogleMapController controller = await _controller.future;
+    final update =
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines);
     // ignore: unawaited_futures
-    controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines));
+    if (update.isNotEmpty) controller._updatePolylines(update);
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   void _updateCircles() async {
     final GoogleMapController controller = await _controller.future;
+    final update = CircleUpdates.from(_circles.values.toSet(), widget.circles);
     // ignore: unawaited_futures
-    controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles));
+    if (update.isNotEmpty) controller._updateCircles(update);
     _circles = keyByCircleId(widget.circles);
   }
 
-  void _updateTileOverlays() async {
+  void _updateTileOverlays(GoogleMap oldWidget) async {
     final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
-    controller._updateTileOverlays(widget.tileOverlays);
+    if (oldWidget.tileOverlays != widget.tileOverlays)
+      controller._updateTileOverlays(widget.tileOverlays);
   }
 
   Future<void> onPlatformViewCreated(int id) async {
@@ -537,19 +539,16 @@ class _GoogleMapOptions {
   Map<String, dynamic> updatesMap(_GoogleMapOptions newOptions) {
     final Map<String, dynamic> prevOptionsMap = toMap();
 
-    bool isSameWithPrevious(String key, dynamic value){
-
+    bool isSameWithPrevious(String key, dynamic value) {
       final previous = prevOptionsMap[key];
 
-      if(value is List && previous is List) {
+      if (value is List && previous is List) {
         return ListEquality().equals(value, previous);
       } else {
         return value == previous;
       }
-
     }
 
-    return newOptions.toMap()
-      ..removeWhere(isSameWithPrevious);
+    return newOptions.toMap()..removeWhere(isSameWithPrevious);
   }
 }
