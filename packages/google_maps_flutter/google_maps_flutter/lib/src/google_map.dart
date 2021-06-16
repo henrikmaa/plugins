@@ -4,6 +4,7 @@
 
 part of google_maps_flutter;
 
+
 /// Callback method for when the map is ready to be used.
 ///
 /// Pass to [GoogleMap.onMapCreated] to receive a [GoogleMapController] when the
@@ -536,8 +537,19 @@ class _GoogleMapOptions {
   Map<String, dynamic> updatesMap(_GoogleMapOptions newOptions) {
     final Map<String, dynamic> prevOptionsMap = toMap();
 
+    bool isSameWithPrevious(String key, dynamic value){
+
+      final previous = prevOptionsMap[key];
+
+      if(value is List && previous is List) {
+        return ListEquality().equals(value, previous);
+      } else {
+        return value == previous;
+      }
+
+    }
+
     return newOptions.toMap()
-      ..removeWhere(
-          (String key, dynamic value) => prevOptionsMap[key] == value);
+      ..removeWhere(isSameWithPrevious);
   }
 }
