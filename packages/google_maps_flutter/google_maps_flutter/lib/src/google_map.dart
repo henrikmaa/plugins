@@ -291,58 +291,67 @@ class _GoogleMapState extends State<GoogleMap> {
     _updateTileOverlays(oldWidget);
   }
 
-  void _updateOptions() async {
+  void _updateOptions() {
     final _GoogleMapOptions newOptions = _GoogleMapOptions.fromWidget(widget);
     final Map<String, dynamic> updates = newOptions.toMap(_googleMapOptions);
     if (updates.isEmpty) {
       return;
     }
-    final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
-    controller._updateMapOptions(updates);
+    _controller.future.then((controller) =>
+        controller._updateMapOptions(updates));
     _googleMapOptions = newOptions;
   }
 
-  void _updateMarkers() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updateMarkers() {
     // ignore: unawaited_futures
     final keyedMarkers = keyByMarkerId(widget.markers);
     final update = MarkerUpdates.from(_markers, keyedMarkers);
-    if (update.isNotEmpty) controller._updateMarkers(update);
+    if (update.isNotEmpty) {
+      _controller.future
+          .then((controller) => controller._updateMarkers(update));
+    }
     _markers = keyedMarkers;
   }
 
-  void _updatePolygons() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updatePolygons() {
     final update =
         PolygonUpdates.from(_polygons.values.toSet(), widget.polygons);
     // ignore: unawaited_futures
-    if (update.isNotEmpty) controller._updatePolygons(update);
+    if (update.isNotEmpty) {
+      _controller.future
+          .then((controller) => controller._updatePolygons(update));
+    }
     _polygons = keyByPolygonId(widget.polygons);
   }
 
-  void _updatePolylines() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updatePolylines() {
     final update =
         PolylineUpdates.from(_polylines.values.toSet(), widget.polylines);
     // ignore: unawaited_futures
-    if (update.isNotEmpty) controller._updatePolylines(update);
+    if (update.isNotEmpty) {
+      _controller.future.then((controller) =>
+      controller._updatePolylines(update));
+    }
     _polylines = keyByPolylineId(widget.polylines);
   }
 
-  void _updateCircles() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updateCircles() {
     final update = CircleUpdates.from(_circles.values.toSet(), widget.circles);
     // ignore: unawaited_futures
-    if (update.isNotEmpty) controller._updateCircles(update);
+    if (update.isNotEmpty) {
+      _controller.future.then((controller) =>
+          controller._updateCircles(update));
+    }
     _circles = keyByCircleId(widget.circles);
   }
 
-  void _updateTileOverlays(GoogleMap? oldWidget) async {
-    final GoogleMapController controller = await _controller.future;
+  void _updateTileOverlays(GoogleMap? oldWidget) {
     // ignore: unawaited_futures
-    if (oldWidget?.tileOverlays != widget.tileOverlays)
-      controller._updateTileOverlays(widget.tileOverlays);
+    if (oldWidget?.tileOverlays != widget.tileOverlays) {
+      _controller.future.then((controller) =>
+          controller._updateTileOverlays(widget.tileOverlays));
+    }
   }
 
   Future<void> onPlatformViewCreated(int id) async {
@@ -515,8 +524,7 @@ class _GoogleMapOptions {
         'mapToolbarEnabled': mapToolbarEnabled,
       if (cameraTargetBounds != filterOnlyDifferent?.cameraTargetBounds)
         'cameraTargetBounds': cameraTargetBounds.toJson(),
-      if (mapType != filterOnlyDifferent?.mapType)
-        'mapType': mapType.index,
+      if (mapType != filterOnlyDifferent?.mapType) 'mapType': mapType.index,
       if (minMaxZoomPreference != filterOnlyDifferent?.minMaxZoomPreference)
         'minMaxZoomPreference': minMaxZoomPreference.toJson(),
       if (rotateGesturesEnabled != filterOnlyDifferent?.rotateGesturesEnabled)
@@ -535,15 +543,16 @@ class _GoogleMapOptions {
         'trackCameraPosition': trackCameraPosition,
       if (myLocationEnabled != filterOnlyDifferent?.myLocationEnabled)
         'myLocationEnabled': myLocationEnabled,
-      if (myLocationButtonEnabled != filterOnlyDifferent?.myLocationButtonEnabled)
+      if (myLocationButtonEnabled !=
+          filterOnlyDifferent?.myLocationButtonEnabled)
         'myLocationButtonEnabled': myLocationButtonEnabled,
       if (padding != filterOnlyDifferent?.padding)
         'padding': <double>[
-        padding.top,
-        padding.left,
-        padding.bottom,
-        padding.right,
-      ],
+          padding.top,
+          padding.left,
+          padding.bottom,
+          padding.right,
+        ],
       if (indoorViewEnabled != filterOnlyDifferent?.indoorViewEnabled)
         'indoorEnabled': indoorViewEnabled,
       if (trafficEnabled != filterOnlyDifferent?.trafficEnabled)
