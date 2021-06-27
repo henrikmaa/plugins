@@ -326,14 +326,15 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void _updatePolylines() {
+    final keyedPolylines = keyByPolylineId(widget.polylines);
     final update =
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines);
+        PolylineUpdates.from(_polylines, keyedPolylines);
     // ignore: unawaited_futures
     if (update.isNotEmpty) {
       _controller.future.then((controller) =>
       controller._updatePolylines(update));
     }
-    _polylines = keyByPolylineId(widget.polylines);
+    _polylines = keyedPolylines;
   }
 
   void _updateCircles() {
