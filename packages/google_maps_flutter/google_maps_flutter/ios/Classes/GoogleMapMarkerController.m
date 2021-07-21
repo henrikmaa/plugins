@@ -131,13 +131,13 @@ static void InterpretMarkerOptions(NSDictionary* data, id<FLTGoogleMapMarkerOpti
     [sink setConsumeTapEvents:ToBool(consumeTapEvents)];
   }
   InterpretInfoWindow(sink, data);
-  NSArray* position = data[@"position"];
-  if (position) {
-    [sink setPosition:ToLocation(position)];
-  }
   NSNumber* rotation = data[@"rotation"];
   if (rotation != nil) {
     [sink setRotation:ToDouble(rotation)];
+  }
+  NSArray* position = data[@"position"];
+  if (position) {
+    [sink setPosition:ToLocation(position)];
   }
   NSNumber* visible = data[@"visible"];
   if (visible != nil) {
