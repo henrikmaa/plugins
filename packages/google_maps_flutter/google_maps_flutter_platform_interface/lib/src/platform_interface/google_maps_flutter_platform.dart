@@ -352,7 +352,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
         const <Factory<OneSequenceGestureRecognizer>>{},
     // TODO: Replace with a structured type that's part of the interface.
     // See https://github.com/flutter/flutter/issues/70330.
-    Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    Object? mapOptions,
   }) {
     throw UnimplementedError('buildView() has not been implemented.');
   }

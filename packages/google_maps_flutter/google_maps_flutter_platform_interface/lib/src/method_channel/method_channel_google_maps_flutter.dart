@@ -447,12 +447,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         Set<Circle> circles = const <Circle>{},
         Set<TileOverlay> tileOverlays = const <TileOverlay>{},
         Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
-        Map<String, dynamic> mapOptions = const <String, dynamic>{},
+        dynamic mapOptions,
       }) {
     if (_creationParams == null) {
       _creationParams = <String, dynamic>{
         'initialCameraPosition': initialCameraPosition.toMap(),
-        'options': mapOptions,
+        'options': mapOptions?.toMap(),
         'markersToAdd': serializeMarkerSet(markers),
         'polygonsToAdd': serializePolygonSet(polygons),
         'polylinesToAdd': serializePolylineSet(polylines),

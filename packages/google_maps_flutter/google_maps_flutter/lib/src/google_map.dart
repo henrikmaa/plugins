@@ -254,12 +254,12 @@ class _GoogleMapState extends State<GoogleMap> {
       _mapId,
       onPlatformViewCreated,
       initialCameraPosition: widget.initialCameraPosition,
-      markers: widget.markers,
-      polygons: widget.polygons,
-      polylines: widget.polylines,
-      circles: widget.circles,
+      markers: {},
+      polygons: {},
+      polylines: {},
+      circles: {},
       gestureRecognizers: widget.gestureRecognizers,
-      mapOptions: _googleMapOptions.toMap(),
+      mapOptions: _googleMapOptions,
     );
   }
 
@@ -267,10 +267,13 @@ class _GoogleMapState extends State<GoogleMap> {
   void initState() {
     super.initState();
     _googleMapOptions = _GoogleMapOptions.fromWidget(widget);
-    _mapReplace(_markers, widget.markers);
-    _polygons = keyByPolygonId(widget.polygons);
-    _polylines = keyByPolylineId(widget.polylines);
-    _circles = keyByCircleId(widget.circles);
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _updateMarkers();
+      _updatePolygons();
+      _updatePolylines();
+      _updateCircles();
+    });
   }
 
   @override
