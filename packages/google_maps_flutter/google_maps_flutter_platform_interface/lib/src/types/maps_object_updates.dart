@@ -5,7 +5,7 @@
 import 'dart:ui' show hashValues, hashList;
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart' show objectRuntimeType, setEquals;
+import 'package:flutter/foundation.dart' show listEquals, objectRuntimeType, setEquals;
 
 import 'maps_object.dart';
 import 'utils/maps_object.dart';
@@ -49,10 +49,10 @@ class MapsObjectUpdates<T extends MapsObject> {
       return currentObjects[id]!;
     }
 
-    _objectIdsToRemove = previousObjectIds.difference(currentObjectIds);
+    _objectIdsToRemove = previousObjectIds.difference(currentObjectIds).toList();
 
-    _objectsToAdd = Set();
-    _objectsToChange = Set();
+    _objectsToAdd = [];
+    _objectsToChange = [];
 
     for (final current in currentObjects.values) {
       final previous = previousObjects[current.mapsId];
@@ -75,26 +75,26 @@ class MapsObjectUpdates<T extends MapsObject> {
   final String objectName;
 
   /// Set of objects to be added in this update.
-  Set<T> get objectsToAdd {
+  List<T> get objectsToAdd {
     return _objectsToAdd;
   }
 
-  late Set<T> _objectsToAdd;
+  late List<T> _objectsToAdd;
 
   /// Set of objects to be removed in this update.
-  Set<MapsObjectId<T>> get objectIdsToRemove {
+  List<MapsObjectId<T>> get objectIdsToRemove {
     return _objectIdsToRemove;
   }
 
-  late Set<MapsObjectId<T>> _objectIdsToRemove;
+  late List<MapsObjectId<T>> _objectIdsToRemove;
 
   /// Set of objects to be changed in this update.
-  Set<T> get objectsToChange {
+  List<T> get objectsToChange {
     return _objectsToChange;
   }
 
   late Map<MapsObjectId<T>, T> _previousObjects;
-  late Set<T> _objectsToChange;
+  late List<T> _objectsToChange;
 
   /// Converts this object to JSON.
   Object toJson() {
@@ -124,9 +124,9 @@ class MapsObjectUpdates<T extends MapsObject> {
       return false;
     }
     return other is MapsObjectUpdates &&
-        setEquals(_objectsToAdd, other._objectsToAdd) &&
-        setEquals(_objectIdsToRemove, other._objectIdsToRemove) &&
-        setEquals(_objectsToChange, other._objectsToChange);
+        listEquals(_objectsToAdd, other._objectsToAdd) &&
+        listEquals(_objectIdsToRemove, other._objectIdsToRemove) &&
+        listEquals(_objectsToChange, other._objectsToChange);
   }
 
   @override

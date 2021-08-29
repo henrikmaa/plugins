@@ -14,11 +14,11 @@ class MarkerUpdates extends MapsObjectUpdates<Marker> {
       : super.mapFrom(previous, current, objectName: 'marker');
 
   /// Set of Markers to be added in this update.
-  Set<Marker> get markersToAdd => objectsToAdd;
+  List<Marker> get markersToAdd => objectsToAdd;
 
   /// Set of MarkerIds to be removed in this update.
-  Set<MarkerId> get markerIdsToRemove => objectIdsToRemove.cast<MarkerId>();
+  List<MarkerId> get markerIdsToRemove => objectIdsToRemove.cast<MarkerId>();
 
   /// Set of Markers to be changed in this update.
-  Set<Marker> get markersToChange => objectsToChange;
+  List<Marker> get markersToChange => objectsToChange;
 }

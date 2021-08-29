@@ -11,12 +11,12 @@ class TileOverlayUpdates extends MapsObjectUpdates<TileOverlay> {
       : super.from(previous, current, objectName: 'tileOverlay');
 
   /// Set of TileOverlays to be added in this update.
-  Set<TileOverlay> get tileOverlaysToAdd => objectsToAdd;
+  Iterable<TileOverlay> get tileOverlaysToAdd => objectsToAdd;
 
   /// Set of TileOverlayIds to be removed in this update.
-  Set<TileOverlayId> get tileOverlayIdsToRemove =>
+  Iterable<TileOverlayId> get tileOverlayIdsToRemove =>
       objectIdsToRemove.cast<TileOverlayId>();
 
   /// Set of TileOverlays to be changed in this update.
-  Set<TileOverlay> get tileOverlaysToChange => objectsToChange;
+  Iterable<TileOverlay> get tileOverlaysToChange => objectsToChange;
 }

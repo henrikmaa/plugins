@@ -14,11 +14,11 @@ class PolygonUpdates extends MapsObjectUpdates<Polygon> {
       : super.from(previous, current, objectName: 'polygon');
 
   /// Set of Polygons to be added in this update.
-  Set<Polygon> get polygonsToAdd => objectsToAdd;
+  List<Polygon> get polygonsToAdd => objectsToAdd;
 
   /// Set of PolygonIds to be removed in this update.
-  Set<PolygonId> get polygonIdsToRemove => objectIdsToRemove.cast<PolygonId>();
+  List<PolygonId> get polygonIdsToRemove => objectIdsToRemove.cast<PolygonId>();
 
   /// Set of Polygons to be changed in this update.
-  Set<Polygon> get polygonsToChange => objectsToChange;
+  List<Polygon> get polygonsToChange => objectsToChange;
 }

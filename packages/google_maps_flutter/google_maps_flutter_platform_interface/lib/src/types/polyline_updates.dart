@@ -14,12 +14,12 @@ class PolylineUpdates extends MapsObjectUpdates<Polyline> {
       : super.mapFrom(previous, current, objectName: 'polyline');
 
   /// Set of Polylines to be added in this update.
-  Set<Polyline> get polylinesToAdd => objectsToAdd;
+  Iterable<Polyline> get polylinesToAdd => objectsToAdd;
 
   /// Set of PolylineIds to be removed in this update.
-  Set<PolylineId> get polylineIdsToRemove =>
+  Iterable<PolylineId> get polylineIdsToRemove =>
       objectIdsToRemove.cast<PolylineId>();
 
   /// Set of Polylines to be changed in this update.
-  Set<Polyline> get polylinesToChange => objectsToChange;
+  Iterable<Polyline> get polylinesToChange => objectsToChange;
 }

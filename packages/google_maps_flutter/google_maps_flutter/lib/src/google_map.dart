@@ -242,7 +242,7 @@ class _GoogleMapState extends State<GoogleMap> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+  final Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
@@ -267,7 +267,7 @@ class _GoogleMapState extends State<GoogleMap> {
   void initState() {
     super.initState();
     _googleMapOptions = _GoogleMapOptions.fromWidget(widget);
-    _markers = widget.markers;
+    _mapReplace(_markers, widget.markers);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
@@ -298,20 +298,20 @@ class _GoogleMapState extends State<GoogleMap> {
       return;
     }
     // ignore: unawaited_futures
-    _controller.future.then((controller) =>
-        controller._updateMapOptions(updates));
+    _controller.future
+        .then((controller) => controller._updateMapOptions(updates));
     _googleMapOptions = newOptions;
   }
 
   void _updateMarkers() {
     // ignore: unawaited_futures
-    final keyedMarkers = widget.markers;
-    final update = MarkerUpdates.from(_markers, keyedMarkers);
+    final newMarkers = widget.markers;
+    final update = MarkerUpdates.from(_markers, newMarkers);
     if (update.isNotEmpty) {
       _controller.future
           .then((controller) => controller._updateMarkers(update));
     }
-    _markers = keyedMarkers;
+    _mapReplace(_markers, newMarkers);
   }
 
   void _updatePolygons() {
@@ -327,12 +327,11 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void _updatePolylines() {
     final keyedPolylines = keyByPolylineId(widget.polylines);
-    final update =
-        PolylineUpdates.from(_polylines, keyedPolylines);
+    final update = PolylineUpdates.from(_polylines, keyedPolylines);
     // ignore: unawaited_futures
     if (update.isNotEmpty) {
-      _controller.future.then((controller) =>
-      controller._updatePolylines(update));
+      _controller.future
+          .then((controller) => controller._updatePolylines(update));
     }
     _polylines = keyedPolylines;
   }
@@ -341,8 +340,8 @@ class _GoogleMapState extends State<GoogleMap> {
     final update = CircleUpdates.from(_circles.values.toSet(), widget.circles);
     // ignore: unawaited_futures
     if (update.isNotEmpty) {
-      _controller.future.then((controller) =>
-          controller._updateCircles(update));
+      _controller.future
+          .then((controller) => controller._updateCircles(update));
     }
     _circles = keyByCircleId(widget.circles);
   }
@@ -350,8 +349,8 @@ class _GoogleMapState extends State<GoogleMap> {
   void _updateTileOverlays(GoogleMap? oldWidget) {
     // ignore: unawaited_futures
     if (oldWidget?.tileOverlays != widget.tileOverlays) {
-      _controller.future.then((controller) =>
-          controller._updateTileOverlays(widget.tileOverlays));
+      _controller.future.then(
+          (controller) => controller._updateTileOverlays(widget.tileOverlays));
     }
   }
 
@@ -562,4 +561,11 @@ class _GoogleMapOptions {
         'buildingsEnabled': buildingsEnabled,
     };
   }
+}
+
+void _mapReplace(Map<MarkerId, Marker?> target, Map<MarkerId, Marker> newValues){
+
+  target.updateAll((key, value) => null);
+  target.addAll(newValues);
+  target.removeWhere((key, value) => value == null);
 }
