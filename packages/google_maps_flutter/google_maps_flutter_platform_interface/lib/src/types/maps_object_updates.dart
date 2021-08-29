@@ -149,6 +149,7 @@ void _zipObjects<T extends MapsObject>(
     if (current.mapsId == previous.mapsId) {
       callback(previous, current);
     } else {
+      /// Always means that this was added, or previous removed.
       failed = true;
       break;
     }
@@ -169,11 +170,11 @@ void _zipObjects<T extends MapsObject>(
 
     for (var current in currentObjects.skip(successIndex)) {
       final previous = previousMap.remove(current.mapsId);
-      callback(current, previous);
+      callback(previous, current);
     }
 
     for (var previous in previousMap.values) {
-      callback(null, previous);
+      callback(previous, null);
     }
   }
 }
