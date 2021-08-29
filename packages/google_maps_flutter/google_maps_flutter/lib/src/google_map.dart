@@ -242,7 +242,7 @@ class _GoogleMapState extends State<GoogleMap> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  final Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+  final Map<MarkerId, Marker?> _markers = <MarkerId, Marker?>{};
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
@@ -306,7 +306,7 @@ class _GoogleMapState extends State<GoogleMap> {
   void _updateMarkers() {
     // ignore: unawaited_futures
     final newMarkers = widget.markers;
-    final update = MarkerUpdates.from(_markers, newMarkers);
+    final update = MarkerUpdates.from(_markers.cast<MarkerId, Marker>(), newMarkers);
     if (update.isNotEmpty) {
       _controller.future
           .then((controller) => controller._updateMarkers(update));

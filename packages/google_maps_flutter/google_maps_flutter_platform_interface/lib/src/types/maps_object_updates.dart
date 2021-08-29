@@ -5,7 +5,8 @@
 import 'dart:ui' show hashValues, hashList;
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart' show listEquals, objectRuntimeType, setEquals;
+import 'package:flutter/foundation.dart'
+    show listEquals, objectRuntimeType, setEquals;
 
 import 'maps_object.dart';
 import 'utils/maps_object.dart';
@@ -49,7 +50,12 @@ class MapsObjectUpdates<T extends MapsObject> {
       return currentObjects[id]!;
     }
 
-    _objectIdsToRemove = previousObjectIds.difference(currentObjectIds).toList();
+    _objectIdsToRemove = [];
+    for (final id in previousObjectIds) {
+      if (!currentObjectIds.contains(id)) {
+        _objectIdsToRemove.add(id);
+      }
+    }
 
     _objectsToAdd = [];
     _objectsToChange = [];
@@ -141,6 +147,7 @@ class MapsObjectUpdates<T extends MapsObject> {
   }
 
   bool get isNotEmpty =>
-      objectsToAdd.isNotEmpty || objectsToChange.isNotEmpty ||
-          objectIdsToRemove.isNotEmpty;
+      objectsToAdd.isNotEmpty ||
+      objectsToChange.isNotEmpty ||
+      objectIdsToRemove.isNotEmpty;
 }
