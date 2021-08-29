@@ -373,7 +373,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerTap(MarkerId markerId) {
     assert(markerId != null);
-    final Marker? marker = _markers[markerId];
+    final Marker? marker =
+        _markers.lastWhereOrNull((element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onTap');
     }
@@ -385,7 +386,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDragEnd(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker = _markers[markerId];
+    final Marker? marker =
+        _markers.lastWhereOrNull((element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragEnd');
     }
@@ -433,7 +435,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onInfoWindowTap(MarkerId markerId) {
     assert(markerId != null);
-    final Marker? marker = _markers[markerId];
+    final Marker? marker =
+        _markers.lastWhereOrNull((element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'InfoWindow onTap');
     }
@@ -566,8 +569,8 @@ class _GoogleMapOptions {
   }
 }
 
-void _mapReplace(Map<MarkerId, Marker?> target, Map<MarkerId, Marker> newValues){
-
+void _mapReplace(
+    Map<MarkerId, Marker?> target, Map<MarkerId, Marker> newValues) {
   target.updateAll((key, value) => null);
   target.addAll(newValues);
   target.removeWhere((key, value) => value == null);
