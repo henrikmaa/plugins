@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import '../types.dart';
 import 'maps_object.dart';
 
@@ -11,6 +13,7 @@ Map<MarkerId, Marker> keyByMarkerId(Iterable<Marker> markers) {
 }
 
 /// Converts a Set of Markers into something serializable in JSON.
-Object serializeMarkerSet(Set<Marker> markers) {
-  return serializeMapsObjectSet(markers);
+Object serializeMarkerSet(Map<MarkerId, Marker> markers) {
+  return serializeMapsObjectSet(
+      MapValueSet<MarkerId, Marker>(markers, (marker) => marker.markerId));
 }
