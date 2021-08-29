@@ -13,6 +13,17 @@ Map<MapsObjectId<T>, T> keyByMapsObjectId<T extends MapsObject>(
 }
 
 /// Converts a Set of [MapsObject]s into something serializable in JSON.
-Object serializeMapsObjectSet(Iterable<MapsObject> mapsObjects, [Map<MapsObjectId, MapsObject> previousObjects = const {}]) {
-  return mapsObjects.map<Object>((MapsObject p) => p.toJson(previousObjects[p.mapsId])).toList();
+Object serializeMapsObjectSet(Iterable<MapsObject> mapsObjects,
+    [Iterable<MapsObject>? previousObjects]) sync* {
+  final currentIterator = mapsObjects.iterator;
+  final previousIterator = previousObjects?.iterator;
+
+  while (currentIterator.moveNext()) {
+    previousIterator?.moveNext();
+
+    final current = currentIterator.current;
+    final previous = previousIterator?.current;
+
+    yield current.toJson(previous);
+  }
 }

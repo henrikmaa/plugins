@@ -4,9 +4,7 @@
 
 import 'dart:ui' show hashValues, hashList;
 
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart'
-    show listEquals, objectRuntimeType, setEquals;
+import 'package:flutter/foundation.dart' show listEquals, objectRuntimeType;
 
 import 'maps_object.dart';
 import 'utils/maps_object.dart';
@@ -14,14 +12,11 @@ import 'utils/maps_object.dart';
 /// Update specification for a set of objects.
 class MapsObjectUpdates<T extends MapsObject> {
   MapsObjectUpdates.from(
-    Set<T> previous,
-    Set<T> current, {
+    Iterable<T> previous,
+    Iterable<T> current, {
     required this.objectName,
   }) {
-    final Map<MapsObjectId<T>, T> previousObjects = keyByMapsObjectId(previous);
-    final Map<MapsObjectId<T>, T> currentObjects = keyByMapsObjectId(current);
-
-    _apply(previousObjects, currentObjects);
+    _apply(previous, current);
   }
 
   /// Computes updates given previous and current object sets.
@@ -34,47 +29,29 @@ class MapsObjectUpdates<T extends MapsObject> {
     Map<MapsObjectId<T>, T> currentObjects, {
     required this.objectName,
   }) {
-    _apply(previousObjects, currentObjects);
+    _apply(previousObjects.values, currentObjects.values);
   }
 
-  void _apply(Map<MapsObjectId<T>, T> previousObjects,
-      Map<MapsObjectId<T>, T> currentObjects) {
-    final Set<MapsObjectId<T>> previousObjectIds = MapKeySet(previousObjects);
-    final Set<MapsObjectId<T>> currentObjectIds = MapKeySet(currentObjects);
-
-    /// Maps an ID back to a [T] in [currentObjects].
-    ///
-    /// It is a programming error to call this with an ID that is not guaranteed
-    /// to be in [currentObjects].
-    T _idToCurrentObject(MapsObjectId<T> id) {
-      return currentObjects[id]!;
-    }
-
+  void _apply(Iterable<T> previousObjects, Iterable<T> currentObjects) {
     _objectIdsToRemove = [];
-    for (final id in previousObjectIds) {
-      if (!currentObjectIds.contains(id)) {
-        _objectIdsToRemove.add(id);
-      }
-    }
-
     _objectsToAdd = [];
     _objectsToChange = [];
+    _objectsToChangePrevious = [];
 
-    for (final current in currentObjects.values) {
-      final previous = previousObjects[current.mapsId];
-
-      if (previous != null) {
+    _zipObjects<T>(previousObjects, currentObjects, (previous, current) {
+      if (current != null && previous != null) {
         final hasChanged = !identical(current, previous) && current != previous;
 
         if (hasChanged) {
           _objectsToChange.add(current);
+          _objectsToChangePrevious.add(previous);
         }
-      } else {
+      } else if (current != null) {
         _objectsToAdd.add(current);
+      } else if (previous != null) {
+        _objectIdsToRemove.add(previous.mapsId as MapsObjectId<T>);
       }
-    }
-
-    _previousObjects = previousObjects;
+    });
   }
 
   /// The name of the objects being updated, for use in serialization.
@@ -99,8 +76,8 @@ class MapsObjectUpdates<T extends MapsObject> {
     return _objectsToChange;
   }
 
-  late Map<MapsObjectId<T>, T> _previousObjects;
   late List<T> _objectsToChange;
+  late List<T> _objectsToChangePrevious;
 
   /// Converts this object to JSON.
   Object toJson() {
@@ -114,7 +91,7 @@ class MapsObjectUpdates<T extends MapsObject> {
 
     addIfNonNull('${objectName}sToAdd', serializeMapsObjectSet(_objectsToAdd));
     addIfNonNull('${objectName}sToChange',
-        serializeMapsObjectSet(_objectsToChange, _previousObjects));
+        serializeMapsObjectSet(_objectsToChange, _objectsToChangePrevious));
     addIfNonNull(
         '${objectName}IdsToRemove',
         _objectIdsToRemove
@@ -150,4 +127,65 @@ class MapsObjectUpdates<T extends MapsObject> {
       objectsToAdd.isNotEmpty ||
       objectsToChange.isNotEmpty ||
       objectIdsToRemove.isNotEmpty;
+}
+
+void _zipObjects<T extends MapsObject>(
+    Iterable<T> previousObjects,
+    Iterable<T> currentObjects,
+    void Function(T? previous, T? current) callback) {
+  final currentIterator = currentObjects.iterator;
+  final previousIterator = previousObjects.iterator;
+
+  /// 99% of the time - exact same key order
+  /// 1% of the time - fallback to map strategy
+
+  int successIndex = 0;
+  var failed = false;
+
+  while (currentIterator.moveNext() && previousIterator.moveNext()) {
+    final current = currentIterator.current;
+    final previous = previousIterator.current;
+
+    if (current.mapsId == previous.mapsId) {
+      callback(previous, current);
+    } else {
+      failed = true;
+      break;
+    }
+
+    successIndex++;
+  }
+
+  bool done =
+      !failed && !currentIterator.moveNext() && !previousIterator.moveNext();
+
+  if (!done) {
+    assert(_checkNoDuplicates(currentObjects));
+
+    final previousMap = Map<MapsObjectId<T>, T>.fromIterable(
+        previousObjects.skip(successIndex),
+        key: (e) => (e as T).mapsId as MapsObjectId<T>,
+        value: (e) => (e as T));
+
+    for (var current in currentObjects.skip(successIndex)) {
+      final previous = previousMap.remove(current.mapsId);
+      callback(current, previous);
+    }
+
+    for (var previous in previousMap.values) {
+      callback(null, previous);
+    }
+  }
+}
+
+bool _checkNoDuplicates(Iterable<MapsObject> currentObjects) {
+  final current = <MapsObject>{};
+
+  for (var object in currentObjects) {
+    if (!current.add(object)) {
+      return false;
+    }
+  }
+
+  return true;
 }

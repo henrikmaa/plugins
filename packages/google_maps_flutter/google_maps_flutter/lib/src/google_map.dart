@@ -67,7 +67,7 @@ class GoogleMap extends StatefulWidget {
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
     this.buildingsEnabled = true,
-    this.markers = const <MarkerId, Marker>{},
+    this.markers = const [],
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
@@ -132,7 +132,7 @@ class GoogleMap extends StatefulWidget {
   final EdgeInsets padding;
 
   /// Markers to be placed on the map.
-  final Map<MarkerId, Marker> markers;
+  final List<Marker> markers;
 
   /// Polygons to be placed on the map.
   final Set<Polygon> polygons;
@@ -309,12 +309,12 @@ class _GoogleMapState extends State<GoogleMap> {
   void _updateMarkers() {
     // ignore: unawaited_futures
     final newMarkers = widget.markers;
-    final update = MarkerUpdates.from(_markers.cast<MarkerId, Marker>(), newMarkers);
+    final update = MarkerUpdates.from(_markers, newMarkers);
     if (update.isNotEmpty) {
       _controller.future
           .then((controller) => controller._updateMarkers(update));
     }
-    _mapReplace(_markers, newMarkers);
+    _markers = newMarkers;
   }
 
   void _updatePolygons() {
