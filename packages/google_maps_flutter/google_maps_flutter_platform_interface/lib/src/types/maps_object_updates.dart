@@ -142,8 +142,14 @@ void _zipObjects<T extends MapsObject>(
   int successIndex = 0;
   var failed = false;
 
-  while (currentIterator.moveNext() && previousIterator.moveNext()) {
+  while (currentIterator.moveNext()) {
     final current = currentIterator.current;
+
+    if (!previousIterator.moveNext()) {
+      callback(null, current);
+      continue;
+    }
+
     final previous = previousIterator.current;
 
     if (current.mapsId == previous.mapsId) {
