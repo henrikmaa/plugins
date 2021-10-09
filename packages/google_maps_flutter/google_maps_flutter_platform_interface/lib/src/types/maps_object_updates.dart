@@ -5,6 +5,7 @@
 import 'dart:ui' show hashValues, hashList;
 
 import 'package:flutter/foundation.dart' show listEquals, objectRuntimeType;
+import 'package:flutter/material.dart';
 
 import 'maps_object.dart';
 import 'utils/maps_object.dart';
@@ -38,7 +39,7 @@ class MapsObjectUpdates<T extends MapsObject> {
     _objectsToChange = [];
     _objectsToChangePrevious = [];
 
-    _zipObjects<T>(previousObjects, currentObjects, (previous, current) {
+    zipObjects<T>(previousObjects, currentObjects, (previous, current) {
       if (current != null && previous != null) {
         final hasChanged = !identical(current, previous) && current != previous;
 
@@ -129,10 +130,11 @@ class MapsObjectUpdates<T extends MapsObject> {
       objectIdsToRemove.isNotEmpty;
 }
 
-void _zipObjects<T extends MapsObject>(
+@visibleForTesting
+void zipObjects<T extends MapsObject>(
     Iterable<T> previousObjects,
     Iterable<T> currentObjects,
-    void Function(T? previous, T? current) callback) {
+    void Function(T? previous, T? current) callback, {bool debugRunDuplicateChecks = true}) {
   final currentIterator = currentObjects.iterator;
   final previousIterator = previousObjects.iterator;
 
@@ -167,8 +169,6 @@ void _zipObjects<T extends MapsObject>(
       !failed && !currentIterator.moveNext() && !previousIterator.moveNext();
 
   if (!done) {
-    assert(_checkNoDuplicates(currentObjects));
-
     final previousMap = Map<MapsObjectId<T>, T>.fromIterable(
         previousObjects.skip(successIndex),
         key: (e) => (e as T).mapsId as MapsObjectId<T>,
@@ -182,6 +182,11 @@ void _zipObjects<T extends MapsObject>(
     for (var previous in previousMap.values) {
       callback(previous, null);
     }
+  }
+
+  if(debugRunDuplicateChecks) {
+    assert(_checkNoDuplicates(previousObjects));
+    assert(_checkNoDuplicates(currentObjects));
   }
 }
 

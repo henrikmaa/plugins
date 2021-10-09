@@ -6,9 +6,10 @@ import 'dart:ui' show hashValues, hashList;
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/utils/maps_object.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/maps_object_updates.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/maps_object.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/maps_object_updates.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/utils/maps_object.dart';
 
 import 'test_maps_object.dart';
 
@@ -155,6 +156,117 @@ void main() {
           'TestMapsObjectUpdate(add: ${updates.objectsToAdd}, '
           'remove: ${updates.objectIdsToRemove}, '
           'change: ${updates.objectsToChange})');
+    });
+  });
+
+  group("zipObjects", () {
+    test("Removed one item", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker1], [],
+          (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      });
+
+      expect(removedSet, {marker1});
+    });
+
+    test("Removed duplicate item", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker1, marker1], [],
+          (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      }, debugRunDuplicateChecks: false);
+
+      expect(removedSet, {marker1});
+    });
+
+    test("Rearranging and removing", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+      final marker2 = Marker(markerId: MarkerId("2"));
+      final marker3 = Marker(markerId: MarkerId("3"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker2, marker1, marker3], [marker1, marker2],
+          (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      });
+
+      expect(removedSet, {marker3});
+    });
+
+    test("Rearranging and removing", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+      final marker2 = Marker(markerId: MarkerId("2"));
+      final marker3 = Marker(markerId: MarkerId("3"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker2, marker1, marker3], [marker1, marker2],
+          (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      });
+
+      expect(removedSet, {marker3});
+    });
+
+    test("Replacing last item", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+      final marker2 = Marker(markerId: MarkerId("2"));
+      final marker3 = Marker(markerId: MarkerId("3"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker1, marker2], [marker1, marker3],
+          (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      });
+
+      expect(removedSet, equals({marker2}));
+    });
+
+    test("Removing first item", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+      final marker2 = Marker(markerId: MarkerId("2"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker1, marker2], [marker2], (previous, next) {
+        if (next == null) {
+          removedSet.add(previous!);
+        }
+      });
+
+      expect(removedSet, equals({marker1}));
+    });
+    test("Removing last item", () {
+      final marker1 = Marker(markerId: MarkerId("1"));
+      final marker2 = Marker(markerId: MarkerId("2"));
+
+      final removedSet = <Marker>{};
+
+      zipObjects<Marker>([marker1, marker2], [], (previous, next) {
+        expect(next, isNull);
+        removedSet.add(previous!);
+      });
+
+      expect(removedSet, equals({marker1, marker2}));
     });
   });
 }

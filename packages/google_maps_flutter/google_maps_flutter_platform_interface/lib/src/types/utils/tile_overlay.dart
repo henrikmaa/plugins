@@ -13,6 +13,6 @@ Map<TileOverlayId, TileOverlay> keyTileOverlayId(
 }
 
 /// Converts a Set of TileOverlays into something serializable in JSON.
-Object serializeTileOverlaySet(Set<TileOverlay> tileOverlays) {
+Object serializeTileOverlaySet(Iterable<TileOverlay> tileOverlays) {
   return serializeMapsObjectSet(tileOverlays);
 }
