@@ -130,6 +130,12 @@ class MarkersController {
     }
     MarkerBuilder markerBuilder = new MarkerBuilder();
     String markerId = Convert.interpretMarkerOptions(marker, markerBuilder);
+
+    if(markerIdToController.containsKey(markerId)){
+      changeMarker(marker);
+      return;
+    }
+
     MarkerOptions options = markerBuilder.build();
     addMarker(markerId, options, markerBuilder.consumeTapEvents());
   }

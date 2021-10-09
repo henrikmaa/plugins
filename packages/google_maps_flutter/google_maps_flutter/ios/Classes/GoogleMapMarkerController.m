@@ -251,6 +251,12 @@ static UIImage* ExtractIcon(NSObject<FlutterPluginRegistrar>* registrar, NSArray
 }
 - (void)addMarkers:(NSArray*)markersToAdd {
   for (NSDictionary* marker in markersToAdd) {
+    FLTGoogleMapMarkerController* previousController = _markerIdToController[markerId];
+    if (previousController) {
+      changeMarkers(marker)
+      continue;
+    }
+
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
     NSString* markerId = [FLTMarkersController getMarkerId:marker];
     FLTGoogleMapMarkerController* controller =
