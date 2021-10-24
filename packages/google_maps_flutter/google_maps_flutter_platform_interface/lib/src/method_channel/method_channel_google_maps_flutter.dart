@@ -435,38 +435,35 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     return channel(mapId).invokeMethod<Uint8List>('map#takeSnapshot');
   }
 
-  Map<String, dynamic>? _creationParams;
-
   @override
-  Widget buildView(int creationId,
-      PlatformViewCreatedCallback onPlatformViewCreated, {
-        required CameraPosition initialCameraPosition,
-        Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
-        Set<Polygon> polygons = const <Polygon>{},
-        Set<Polyline> polylines = const <Polyline>{},
-        Set<Circle> circles = const <Circle>{},
-        Set<TileOverlay> tileOverlays = const <TileOverlay>{},
-        Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
-        dynamic mapOptions,
-      }) {
-    if (_creationParams == null) {
-      _creationParams = <String, dynamic>{
-        'initialCameraPosition': initialCameraPosition.toMap(),
-        'options': mapOptions?.toMap(),
-        'markersToAdd': serializeMarkerSet(markers),
-        'polygonsToAdd': serializePolygonSet(polygons),
-        'polylinesToAdd': serializePolylineSet(polylines),
-        'circlesToAdd': serializeCircleSet(circles),
-        'tileOverlaysToAdd': serializeTileOverlaySet(tileOverlays),
-      };
-    }
+  Widget buildView(
+    int creationId,
+    PlatformViewCreatedCallback onPlatformViewCreated, {
+    required CameraPosition initialCameraPosition,
+    Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
+    Set<Polygon> polygons = const <Polygon>{},
+    Set<Polyline> polylines = const <Polyline>{},
+    Set<Circle> circles = const <Circle>{},
+    Set<TileOverlay> tileOverlays = const <TileOverlay>{},
+    Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
+    dynamic mapOptions,
+  }) {
+    final creationParams = <String, dynamic>{
+      'initialCameraPosition': initialCameraPosition.toMap(),
+      'options': mapOptions?.toMap(),
+      'markersToAdd': serializeMarkerSet(markers),
+      'polygonsToAdd': serializePolygonSet(polygons),
+      'polylinesToAdd': serializePolylineSet(polylines),
+      'circlesToAdd': serializeCircleSet(circles),
+      'tileOverlaysToAdd': serializeTileOverlaySet(tileOverlays),
+    };
 
     if (defaultTargetPlatform == TargetPlatform.android) {
       return AndroidView(
         viewType: 'plugins.flutter.io/google_maps',
         onPlatformViewCreated: onPlatformViewCreated,
         gestureRecognizers: gestureRecognizers,
-        creationParams: _creationParams,
+        creationParams: creationParams,
         creationParamsCodec: const StandardMessageCodec(),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -474,7 +471,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         viewType: 'plugins.flutter.io/google_maps',
         onPlatformViewCreated: onPlatformViewCreated,
         gestureRecognizers: gestureRecognizers,
-        creationParams: _creationParams,
+        creationParams: creationParams,
         creationParamsCodec: const StandardMessageCodec(),
       );
     }
