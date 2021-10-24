@@ -269,6 +269,10 @@ class _GoogleMapState extends State<GoogleMap> {
     _googleMapOptions = _GoogleMapOptions.fromWidget(widget);
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      // ignore: unawaited_futures
+      _controller.future
+          .then((controller) => controller._updateMapOptions(_googleMapOptions.toMap()));
+
       _updateMarkers();
       _updatePolygons();
       _updatePolylines();
