@@ -183,6 +183,15 @@ class GoogleMapController {
         .animateCamera(cameraUpdate, mapId: mapId);
   }
 
+  /// Starts an animated change of the map camera position.
+  ///
+  /// The returned [Future] completes after the change has been started on the
+  /// platform side.
+  Future<void> animateToBearingIos(double bearing) {
+    return GoogleMapsFlutterPlatform.instance
+        .animateToBearingIos(cameraUpdate, mapId: mapId);
+  }
+
   /// Changes the map camera position.
   ///
   /// The returned [Future] completes after the change has been made on the

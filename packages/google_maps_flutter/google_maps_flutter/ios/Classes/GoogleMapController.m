@@ -170,6 +170,21 @@ static double ToDouble(NSNumber* data) { return [FLTGoogleMapJsonConversions toD
   } else if ([call.method isEqualToString:@"map#update"]) {
     InterpretMapOptions(call.arguments[@"options"], self);
     result(PositionToJson([self cameraPosition]));
+  } else if ([call.method isEqualToString:@"map#animateToBearing"]) {
+    if (_mapView != nil) {
+        id bearing = call.arguments[@"bearing"];
+        if ([bearing isKindOfClass:[NSNumber class]]) {
+            [_mapView animateToBearing:[bearing doubleValue]];
+        } else {
+            result([FlutterError errorWithCode:@"JOHANNES"
+                                       message:@"Plugin error"
+                                       details:nil]);
+        }
+    } else {
+      result([FlutterError errorWithCode:@"GoogleMap uninitialized"
+                                 message:@"animateToBearing called prior to map initialization"
+                                 details:nil]);
+    }
   } else if ([call.method isEqualToString:@"map#getVisibleRegion"]) {
     if (_mapView != nil) {
       GMSVisibleRegion visibleRegion = _mapView.projection.visibleRegion;

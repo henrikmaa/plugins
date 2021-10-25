@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -319,6 +320,18 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     return channel(mapId)
         .invokeMethod<void>('tileOverlays#clearTileCache', <String, Object>{
       'tileOverlayId': tileOverlayId.value,
+    });
+  }
+
+  @override
+  Future<void> animateToBearingIos(
+    double bearing, {
+    required int mapId,
+  }) {
+    assert(Platform.isIOS);
+
+    return channel(mapId).invokeMethod<void>('map#animateToBearing', <String, Object>{
+      'bearing': bearing,
     });
   }
 
