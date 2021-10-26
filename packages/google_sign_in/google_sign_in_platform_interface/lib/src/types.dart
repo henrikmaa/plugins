@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,6 +31,7 @@ class GoogleSignInUserData {
     this.displayName,
     this.photoUrl,
     this.idToken,
+    this.serverAuthCode,
   });
 
   /// The display name of the signed in user.
@@ -66,9 +67,12 @@ class GoogleSignInUserData {
   /// data.
   String? idToken;
 
+  /// Server auth code used to access Google Login
+  String? serverAuthCode;
+
   @override
-  int get hashCode =>
-      hashObjects(<String?>[displayName, email, id, photoUrl, idToken]);
+  int get hashCode => hashObjects(
+      <String?>[displayName, email, id, photoUrl, idToken, serverAuthCode]);
 
   @override
   bool operator ==(dynamic other) {
@@ -79,7 +83,8 @@ class GoogleSignInUserData {
         otherUserData.email == email &&
         otherUserData.id == id &&
         otherUserData.photoUrl == photoUrl &&
-        otherUserData.idToken == idToken;
+        otherUserData.idToken == idToken &&
+        otherUserData.serverAuthCode == serverAuthCode;
   }
 }
 

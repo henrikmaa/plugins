@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,8 @@ GoogleSignInUserData? getUserDataFromMap(Map<String, dynamic>? data) {
       id: data['id']!,
       displayName: data['displayName'],
       photoUrl: data['photoUrl'],
-      idToken: data['idToken']);
+      idToken: data['idToken'],
+      serverAuthCode: data['serverAuthCode']);
 }
 
 /// Converts token data coming from native code into the proper platform interface type.

@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -69,6 +69,12 @@ class GoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onMarkerTap(mapId: mapId)
         .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
+        (MarkerDragStartEvent e) =>
+            _googleMapState.onMarkerDragStart(e.value, e.position));
+    GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
+        (MarkerDragEvent e) =>
+            _googleMapState.onMarkerDrag(e.value, e.position));
     GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
         (MarkerDragEndEvent e) =>
             _googleMapState.onMarkerDragEnd(e.value, e.position));

@@ -1,4 +1,4 @@
-// Copyright 2020 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,7 @@ class XTypeGroup {
     this.mimeTypes,
     this.macUTIs,
     this.webWildCards,
-  }) : this.extensions = _removeLeadingDots(extensions);
+  }) : extensions = _removeLeadingDots(extensions);
 
   /// The 'name' or reference to this group of types
   final String? label;
@@ -42,6 +42,7 @@ class XTypeGroup {
     };
   }
 
-  static List<String>? _removeLeadingDots(List<String>? exts) =>
-      exts?.map((ext) => ext.startsWith('.') ? ext.substring(1) : ext).toList();
+  static List<String>? _removeLeadingDots(List<String>? exts) => exts
+      ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
+      .toList();
 }

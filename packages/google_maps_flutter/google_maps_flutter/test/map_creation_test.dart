@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -227,6 +227,16 @@ class TestGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   @override
   Stream<InfoWindowTapEvent> onInfoWindowTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<InfoWindowTapEvent>();
+  }
+
+  @override
+  Stream<MarkerDragStartEvent> onMarkerDragStart({required int mapId}) {
+    return mapEventStreamController.stream.whereType<MarkerDragStartEvent>();
+  }
+
+  @override
+  Stream<MarkerDragEvent> onMarkerDrag({required int mapId}) {
+    return mapEventStreamController.stream.whereType<MarkerDragEvent>();
   }
 
   @override
