@@ -270,8 +270,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       // ignore: unawaited_futures
-      _controller.future
-          .then((controller) => controller._updateMapOptions(_googleMapOptions.toMap()));
+      _controller.future.then((controller) =>
+          controller._updateMapOptions(_googleMapOptions.toMap()));
 
       _updateMarkers();
       _updatePolygons();
@@ -390,7 +390,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDragStart(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker = _markers[markerId];
+    final Marker? marker =
+        _markers.lastWhereOrNull((element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragStart');
     }
@@ -402,7 +403,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDrag(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker = _markers[markerId];
+    final Marker? marker =
+        _markers.lastWhereOrNull((element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDrag');
     }
