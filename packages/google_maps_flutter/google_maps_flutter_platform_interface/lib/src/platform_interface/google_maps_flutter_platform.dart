@@ -397,7 +397,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     Set<Circle> circles = const <Circle>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
-    Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    Object? mapOptions,
   }) {
     return buildView(
       creationId,
