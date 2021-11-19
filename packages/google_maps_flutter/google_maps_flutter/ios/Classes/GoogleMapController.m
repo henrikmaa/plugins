@@ -67,7 +67,6 @@ static double ToDouble(NSNumber* data) { return [FLTGoogleMapJsonConversions toD
     _viewId = viewId;
 
     GMSCameraPosition* camera = ToOptionalCameraPosition(args[@"initialCameraPosition"]);
-    [GMSServices setMetalRendererEnabled:YES];
     _mapView = [GMSMapView mapWithFrame:frame camera:camera];
     _mapView.accessibilityElementsHidden = YES;
     _trackCameraPosition = NO;
