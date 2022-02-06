@@ -137,7 +137,10 @@ static void InterpretMarkerOptions(NSDictionary* data, id<FLTGoogleMapMarkerOpti
   }
   NSArray* position = data[@"position"];
   if (position) {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration: 0];
     [sink setPosition:ToLocation(position)];
+    [CATransaction commit];
   }
   NSNumber* visible = data[@"visible"];
   if (visible != nil) {

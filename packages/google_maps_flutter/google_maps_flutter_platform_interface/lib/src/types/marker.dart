@@ -261,51 +261,27 @@ class Marker implements MapsObject {
   Marker clone() => copyWith();
 
   /// Converts this object to something serializable in JSON.
-  Object toJson([MapsObject? previous]) {
-    final Map<String, Object> json = <String, Object>{};
+  Map<String, dynamic> toJson([Marker previous]) {
+    final Map<String, dynamic> json = <String, dynamic>{};
 
-    void addIfPresent(String fieldName, Object? value) {
+    void addIfPresent(String fieldName, dynamic value) {
       if (value != null) {
         json[fieldName] = value;
       }
     }
 
-    final typedPrevious = previous as Marker?;
-
     addIfPresent('markerId', markerId.value);
-    if (alpha != typedPrevious?.alpha) {
-      addIfPresent('alpha', alpha);
-    }
-    if (anchor != typedPrevious?.anchor) {
-      addIfPresent('anchor', _offsetToJson(anchor));
-    }
-    if (consumeTapEvents != typedPrevious?.consumeTapEvents) {
-      addIfPresent('consumeTapEvents', consumeTapEvents);
-    }
-    if (draggable != typedPrevious?.draggable) {
-      addIfPresent('draggable', draggable);
-    }
-    if (flat != typedPrevious?.flat) {
-      addIfPresent('flat', flat);
-    }
-    if (icon != previous?.icon) {
-      addIfPresent('icon', icon.toJson());
-    }
-    if (infoWindow != typedPrevious?.infoWindow) {
-      addIfPresent('infoWindow', infoWindow._toJson());
-    }
-    if (position != typedPrevious?.position) {
-      addIfPresent('position', position.toJson());
-    }
-    if (rotation != typedPrevious?.rotation) {
-      addIfPresent('rotation', rotation);
-    }
-    if (visible != typedPrevious?.visible) {
-      addIfPresent('visible', visible);
-    }
-    if (zIndex != typedPrevious?.zIndex) {
-      addIfPresent('zIndex', zIndex);
-    }
+    addIfPresent('alpha', alpha);
+    addIfPresent('anchor', _offsetToJson(anchor));
+    addIfPresent('consumeTapEvents', consumeTapEvents);
+    addIfPresent('draggable', draggable);
+    addIfPresent('flat', flat);
+    if (icon != previous?.icon) addIfPresent('icon', icon?.toJson());
+    addIfPresent('infoWindow', infoWindow?._toJson());
+    addIfPresent('position', position?.toJson());
+    addIfPresent('rotation', rotation);
+    addIfPresent('visible', visible);
+    addIfPresent('zIndex', zIndex);
     return json;
   }
 

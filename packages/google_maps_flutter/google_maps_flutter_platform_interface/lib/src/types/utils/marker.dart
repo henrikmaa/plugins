@@ -1,19 +1,22 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2019 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart';
-
 import '../types.dart';
-import 'maps_object.dart';
 
 /// Converts an [Iterable] of Markers in a Map of MarkerId -> Marker.
 Map<MarkerId, Marker> keyByMarkerId(Iterable<Marker> markers) {
-  return keyByMapsObjectId<Marker>(markers).cast<MarkerId, Marker>();
+  if (markers == null) {
+    return <MarkerId, Marker>{};
+  }
+  return Map<MarkerId, Marker>.fromEntries(markers.map((Marker marker) =>
+      MapEntry<MarkerId, Marker>(marker.markerId, marker)));
 }
 
 /// Converts a Set of Markers into something serializable in JSON.
-Object serializeMarkerSet(Map<MarkerId, Marker> markers) {
-  return serializeMapsObjectSet(
-      MapValueSet<MarkerId, Marker>(markers, (marker) => marker.markerId));
+List<Map<String, dynamic>> serializeMarkerSet(Set<Marker> markers, [Map<MarkerId, Marker> previousMarkers = const {}]) {
+  if (markers == null) {
+    return null;
+  }
+  return markers.map<Map<String, dynamic>>((Marker m) => m.toJson(previousMarkers[m.markerId])).toList();
 }

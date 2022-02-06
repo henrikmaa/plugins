@@ -14,7 +14,7 @@ typedef MapCreatedCallback = void Function(GoogleMapController controller);
 // to the buildView function, so the web implementation can use it as a
 // cache key. This needs to be provided from the outside, because web
 // views seem to re-render much more often that mobile platform views.
-int _nextMapCreationId = 0;
+int _webOnlyMapId = 0;
 
 /// Error thrown when an unknown map object ID is provided to a method.
 class UnknownMapObjectIdError extends Error {
@@ -282,7 +282,7 @@ class GoogleMap extends StatefulWidget {
 }
 
 class _GoogleMapState extends State<GoogleMap> {
-  final _mapId = _nextMapCreationId++;
+  final _webOnlyMapCreationId = _webOnlyMapId++;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -293,21 +293,14 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   late _GoogleMapOptions _googleMapOptions;
 
+  Map<String, dynamic> _creationParams;
+
   @override
   Widget build(BuildContext context) {
-    return GoogleMapsFlutterPlatform.instance.buildViewWithTextDirection(
-      _mapId,
+    return _googleMapsFlutterPlatform.buildView(
+      _creationParams,
+      widget.gestureRecognizers,
       onPlatformViewCreated,
-      textDirection: widget.layoutDirection ??
-          Directionality.maybeOf(context) ??
-          TextDirection.ltr,
-      initialCameraPosition: widget.initialCameraPosition,
-      markers: {},
-      polygons: {},
-      polylines: {},
-      circles: {},
-      gestureRecognizers: widget.gestureRecognizers,
-      mapOptions: _googleMapOptions,
     );
   }
 
@@ -326,6 +319,15 @@ class _GoogleMapState extends State<GoogleMap> {
       _updatePolylines();
       _updateCircles();
     });
+    _creationParams = <String, dynamic>{
+      'initialCameraPosition': widget.initialCameraPosition?.toMap(),
+      'options': _googleMapOptions.toMap(),
+      'markersToAdd': [],
+      'polygonsToAdd': [],
+      'polylinesToAdd': [],
+      'circlesToAdd': [],
+      '_webOnlyMapCreationId': _webOnlyMapCreationId,
+    };
   }
 
   @override
