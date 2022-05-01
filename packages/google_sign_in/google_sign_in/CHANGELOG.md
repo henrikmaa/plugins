@@ -1,3 +1,16 @@
+## 5.3.0
+
+* Moves Android and iOS implementations to federated packages.
+
+## 5.2.5
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+* Adds OS version support information to README.
+
+## 5.2.4
+
+* Internal code cleanup for stricter analysis options.
+
 ## 5.2.3
 
 * Bumps the Android dependency on `com.google.android.gms:play-services-auth` and therefore removes the need for `jetifier`.

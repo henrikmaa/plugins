@@ -11,9 +11,6 @@ enabled_branches:
 platform_properties:
   linux:
     properties:
-      caches: >-
-        [
-        ]
       dependencies: >
         [
           {"dependency": "curl"}
@@ -22,11 +19,6 @@ platform_properties:
       os: Linux
   windows:
     properties:
-      caches: >-
-        [
-          {"name": "vsbuild", "path": "vsbuild"},
-          {"name": "pub_cache", "path": ".pub-cache"}
-        ]
       dependencies: >
         [
           {"dependency": "certs"}
@@ -47,7 +39,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Windows win32-platform_tests stable
     recipe: plugins/plugins
@@ -60,7 +51,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Windows windows-build_all_plugins master
     recipe: plugins/plugins
@@ -74,7 +64,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
 
   - name: Windows windows-build_all_plugins stable
     recipe: plugins/plugins
@@ -87,21 +76,6 @@ targets:
         [
           {"dependency": "vs_build"}
         ]
-    scheduler: luci
-
-  - name: Windows uwp-platform_tests master
-    recipe: plugins/plugins
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: uwp_build_and_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build"}
-        ]
-    scheduler: luci
 
   - name: Windows plugin_tools_tests
     recipe: plugins/plugins
@@ -111,11 +85,9 @@ targets:
       target_file: plugin_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
-    scheduler: luci
 
   - name: Linux ci_yaml plugins roller
     recipe: infra/ci_yaml
     timeout: 30
-    scheduler: luci
     runIf:
       - .ci.yaml

@@ -25,11 +25,12 @@ class UnknownMapObjectIdError extends Error {
   final String objectType;
 
   /// The unknown maps object ID.
-  final MapsObjectId objectId;
+  final MapsObjectId<Object> objectId;
 
   /// The context where the error occurred.
   final String? context;
 
+  @override
   String toString() {
     if (context != null) {
       return 'Unknown $objectType ID "${objectId.value}" in $context';
@@ -40,6 +41,8 @@ class UnknownMapObjectIdError extends Error {
 
 /// Android specific settings for [GoogleMap].
 class AndroidGoogleMapsFlutter {
+  AndroidGoogleMapsFlutter._();
+
   /// Whether to render [GoogleMap] with a [AndroidViewSurface] to build the Google Maps widget.
   ///
   /// This implementation uses hybrid composition to render the Google Maps
@@ -282,7 +285,7 @@ class GoogleMap extends StatefulWidget {
 }
 
 class _GoogleMapState extends State<GoogleMap> {
-  final _mapId = _nextMapCreationId++;
+  final int _mapId = _nextMapCreationId++;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -329,9 +332,13 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   @override
-  void dispose() async {
+  void dispose() {
+    _disposeController();
     super.dispose();
-    GoogleMapController controller = await _controller.future;
+  }
+
+  Future<void> _disposeController() async {
+    final GoogleMapController controller = await _controller.future;
     controller.dispose();
   }
 

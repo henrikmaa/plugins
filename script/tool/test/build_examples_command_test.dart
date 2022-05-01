@@ -57,13 +57,13 @@ void main() {
     test('fails if building fails', () async {
       createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformIos: const PlatformDetails(PlatformSupport.inline),
+            platformIOS: const PlatformDetails(PlatformSupport.inline),
           });
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
           <io.Process>[
-        MockProcess(exitCode: 1) // flutter packages get
+        MockProcess(exitCode: 1) // flutter pub get
       ];
 
       Error? commandError;
@@ -86,13 +86,13 @@ void main() {
       createFakePlugin('plugin', packagesDir,
           examples: <String>[],
           platformSupport: <String, PlatformDetails>{
-            kPlatformIos: const PlatformDetails(PlatformSupport.inline)
+            platformIOS: const PlatformDetails(PlatformSupport.inline)
           });
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
           <io.Process>[
-        MockProcess(exitCode: 1) // flutter packages get
+        MockProcess(exitCode: 1) // flutter pub get
       ];
 
       Error? commandError;
@@ -136,7 +136,7 @@ void main() {
       mockPlatform.isMacOS = true;
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformIos: const PlatformDetails(PlatformSupport.inline),
+            platformIOS: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -193,7 +193,7 @@ void main() {
       mockPlatform.isLinux = true;
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformLinux: const PlatformDetails(PlatformSupport.inline),
+            platformLinux: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -242,7 +242,7 @@ void main() {
       mockPlatform.isMacOS = true;
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformMacos: const PlatformDetails(PlatformSupport.inline),
+            platformMacOS: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -288,7 +288,7 @@ void main() {
     test('building for web', () async {
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformWeb: const PlatformDetails(PlatformSupport.inline),
+            platformWeb: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -313,7 +313,7 @@ void main() {
     });
 
     test(
-        'building for win32 when plugin is not set up for Windows results in no-op',
+        'building for Windows when plugin is not set up for Windows results in no-op',
         () async {
       mockPlatform.isWindows = true;
       createFakePlugin('plugin', packagesDir);
@@ -325,7 +325,7 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains('Win32 is not supported by this plugin'),
+          contains('Windows is not supported by this plugin'),
         ]),
       );
 
@@ -334,11 +334,11 @@ void main() {
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
-    test('building for win32', () async {
+    test('building for Windows', () async {
       mockPlatform.isWindows = true;
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformWindows: const PlatformDetails(PlatformSupport.inline),
+            platformWindows: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -350,7 +350,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<String>[
-          '\nBUILDING plugin/example for Win32 (windows)',
+          '\nBUILDING plugin/example for Windows',
         ]),
       );
 
@@ -361,88 +361,6 @@ void main() {
                 getFlutterCommand(mockPlatform),
                 const <String>['build', 'windows'],
                 pluginExampleDirectory.path),
-          ]));
-    });
-
-    test('building for UWP when plugin does not support UWP is a no-op',
-        () async {
-      createFakePlugin('plugin', packagesDir);
-
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['build-examples', '--winuwp']);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('UWP is not supported by this plugin'),
-        ]),
-      );
-
-      // Output should be empty since running build-examples --macos with no macos
-      // implementation is a no-op.
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
-
-    test('building for UWP', () async {
-      final Directory pluginDirectory =
-          createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test',
-      ], platformSupport: <String, PlatformDetails>{
-        kPlatformWindows: const PlatformDetails(PlatformSupport.federated,
-            variants: <String>[platformVariantWinUwp]),
-      });
-
-      final Directory pluginExampleDirectory =
-          pluginDirectory.childDirectory('example');
-
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['build-examples', '--winuwp']);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('BUILDING plugin/example for UWP (winuwp)'),
-        ]),
-      );
-
-      expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall(getFlutterCommand(mockPlatform),
-                const <String>['build', 'winuwp'], pluginExampleDirectory.path),
-          ]));
-    });
-
-    test('building for UWP creates a folder if necessary', () async {
-      final Directory pluginDirectory =
-          createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test',
-      ], platformSupport: <String, PlatformDetails>{
-        kPlatformWindows: const PlatformDetails(PlatformSupport.federated,
-            variants: <String>[platformVariantWinUwp]),
-      });
-
-      final Directory pluginExampleDirectory =
-          pluginDirectory.childDirectory('example');
-
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['build-examples', '--winuwp']);
-
-      expect(
-        output,
-        contains('Creating temporary winuwp folder'),
-      );
-
-      expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>['create', '--platforms=winuwp', '.'],
-                pluginExampleDirectory.path),
-            ProcessCall(getFlutterCommand(mockPlatform),
-                const <String>['build', 'winuwp'], pluginExampleDirectory.path),
           ]));
     });
 
@@ -470,7 +388,7 @@ void main() {
     test('building for Android', () async {
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformAndroid: const PlatformDetails(PlatformSupport.inline),
+            platformAndroid: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -499,7 +417,7 @@ void main() {
     test('enable-experiment flag for Android', () async {
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformAndroid: const PlatformDetails(PlatformSupport.inline),
+            platformAndroid: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -521,7 +439,7 @@ void main() {
     test('enable-experiment flag for ios', () async {
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformIos: const PlatformDetails(PlatformSupport.inline),
+            platformIOS: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
@@ -547,7 +465,7 @@ void main() {
     test('logs skipped platforms', () async {
       createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformAndroid: const PlatformDetails(PlatformSupport.inline),
+            platformAndroid: const PlatformDetails(PlatformSupport.inline),
           });
 
       final List<String> output = await runCapturingPrint(
@@ -681,8 +599,8 @@ void main() {
       mockPlatform.isLinux = true;
       final Directory pluginDirectory = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{
-            kPlatformLinux: const PlatformDetails(PlatformSupport.inline),
-            kPlatformMacos: const PlatformDetails(PlatformSupport.inline),
+            platformLinux: const PlatformDetails(PlatformSupport.inline),
+            platformMacOS: const PlatformDetails(PlatformSupport.inline),
           });
 
       final Directory pluginExampleDirectory =
