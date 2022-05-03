@@ -4,6 +4,7 @@
 
 #import "GoogleMapPolylineController.h"
 #import "JsonConversions.h"
+#import "GoogleMapMarkerController.h"
 
 @implementation FLTGoogleMapPolylineController {
   GMSPolyline *_polyline;
