@@ -37,7 +37,7 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
   _polyline.map = visible ? _mapView : nil;
 }
 
-- (void)setStampStyle:(UIImage *)icon {
+- (void)setStampStyle:(UIImage * _Nonnull)icon {
     GMSTextureStyle *stampStyle = [GMSTextureStyle textureStyleWithImage:icon];
     GMSStrokeStyle *strokeStyle = [GMSStrokeStyle solidColor:[UIColor clearColor]];
     strokeStyle.stampStyle = stampStyle;
