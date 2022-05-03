@@ -93,10 +93,8 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
 
     NSArray *icon = data[@"iosStampStyle"];
     if(icon){
-        if (icon != nil) {
-            UIImage *image = ExtractIcon(registrar, icon);
-            [sink setStampStyle:image];
-        }
+        UIImage *image = ExtractIcon(registrar, icon);
+        [sink setStampStyle:image];
     }
 
   NSNumber *zIndex = data[@"zIndex"];
@@ -226,49 +224,15 @@ static UIImage *scaleImage(UIImage *image, NSNumber *scaleParam) {
 
 static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray *iconData) {
   UIImage *image;
-  if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
-    CGFloat hue = (iconData.count == 1) ? 0.0f : ToDouble(iconData[1]);
-    image = [GMSMarker markerImageWithColor:[UIColor colorWithHue:hue / 360.0
-                                                       saturation:1.0
-                                                       brightness:0.7
-                                                            alpha:1.0]];
-  } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
-    if (iconData.count == 2) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-    } else {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]
-                                                   fromPackage:iconData[2]]];
-    }
-  } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
+
+  if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
     if (iconData.count == 3) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-      NSNumber *scaleParam = iconData[2];
-      image = scaleImage(image, scaleParam);
     } else {
       NSString *error =
           [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
                                      (unsigned long)iconData.count];
       NSException *exception = [NSException exceptionWithName:@"InvalidBitmapDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
-    }
-  } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
-    if (iconData.count == 2) {
-      @try {
-        FlutterStandardTypedData *byteData = iconData[1];
-        CGFloat screenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:screenScale];
-      } @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                       reason:@"Unable to interpret bytes as a valid image."
-                                     userInfo:nil];
-      }
-    } else {
-      NSString *error = [NSString
-          stringWithFormat:@"fromBytes should have exactly one argument, the bytes. Got: %lu",
-                           (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidByteDescriptor"
                                                        reason:error
                                                      userInfo:nil];
       @throw exception;
