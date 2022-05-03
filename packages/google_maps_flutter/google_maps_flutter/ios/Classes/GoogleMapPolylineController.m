@@ -92,7 +92,7 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
     NSArray *icon = data[@"iosStampStyle"];
     if (icon) {
         UIImage *image = ExtractIcon(registrar, icon);
-        [sink setIcon:image];
+        [sink setStampStyle:image];
     }
 
   NSNumber *zIndex = data[@"zIndex"];
