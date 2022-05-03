@@ -32,6 +32,7 @@ class Polyline implements MapsObject {
     this.jointType = JointType.mitered,
     this.points = const <LatLng>[],
     this.patterns = const <PatternItem>[],
+    this.iosStampStyle,
     this.startCap = Cap.buttCap,
     this.visible = true,
     this.width = 10,
@@ -75,6 +76,10 @@ class Polyline implements MapsObject {
   /// Available PatternItem types: Gap (defined by gap length in pixels), Dash (defined by line width and dash
   /// length in pixels) and Dot (circular, centered on the line, diameter defined by line width in pixels).
   final List<PatternItem> patterns;
+
+  /// Image file used to cover the polyline.
+  /// See https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_stamp_style for details
+  final BitmapDescriptor? iosStampStyle;
 
   /// The vertices of the polyline to be drawn.
   ///
@@ -139,6 +144,7 @@ class Polyline implements MapsObject {
       geodesic: geodesicParam ?? geodesic,
       jointType: jointTypeParam ?? jointType,
       patterns: patternsParam ?? patterns,
+      iosStampStyle: iosStampStyle,
       points: pointsParam ?? points,
       startCap: startCapParam ?? startCap,
       visible: visibleParam ?? visible,
@@ -172,6 +178,7 @@ class Polyline implements MapsObject {
     addIfPresent('color', color.value);
     addIfPresent('endCap', endCap.toJson());
     addIfPresent('geodesic', geodesic);
+    addIfPresent('iosStampStyle', iosStampStyle?.toJson());
     addIfPresent('jointType', jointType.value);
     addIfPresent('startCap', startCap.toJson());
     addIfPresent('visible', visible);
@@ -201,6 +208,7 @@ class Polyline implements MapsObject {
         jointType == typedOther.jointType &&
         listEquals(patterns, typedOther.patterns) &&
         listEquals(points, typedOther.points) &&
+        iosStampStyle == typedOther.iosStampStyle &&
         startCap == typedOther.startCap &&
         endCap == typedOther.endCap &&
         visible == typedOther.visible &&
