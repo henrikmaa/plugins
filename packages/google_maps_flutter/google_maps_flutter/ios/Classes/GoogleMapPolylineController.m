@@ -274,3 +274,6 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
 
   return image;
 }
+
+
+static double ToDouble(NSNumber *data) { return [FLTGoogleMapJsonConversions toDouble:data]; }
