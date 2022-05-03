@@ -9,7 +9,7 @@ Map<MapsObjectId<T>, T> keyByMapsObjectId<T extends MapsObject>(
     Iterable<T> objects) {
   return Map<MapsObjectId<T>, T>.fromEntries(objects.map((T object) =>
       MapEntry<MapsObjectId<T>, T>(
-          object.mapsId as MapsObjectId<T>, object.clone())));
+          object.mapsId as MapsObjectId<T>, object)));
 }
 
 /// Converts a Set of [MapsObject]s into something serializable in JSON.
