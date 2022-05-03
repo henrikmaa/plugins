@@ -206,6 +206,7 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
 }
 @end
 
+static double ToDouble(NSNumber *data) { return [FLTGoogleMapJsonConversions toDouble:data]; }
 
 
 static UIImage *scaleImage(UIImage *image, NSNumber *scaleParam) {
@@ -274,6 +275,3 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
 
   return image;
 }
-
-
-static double ToDouble(NSNumber *data) { return [FLTGoogleMapJsonConversions toDouble:data]; }
