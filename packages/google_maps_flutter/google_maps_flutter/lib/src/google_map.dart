@@ -360,7 +360,7 @@ class _GoogleMapState extends State<GoogleMap> {
       return;
     }
     // ignore: unawaited_futures
-    _controller?._updateMapOptions(updates);
+    _controller!._updateMapOptions(updates);
     _googleMapOptions = newOptions;
   }
 
@@ -370,7 +370,7 @@ class _GoogleMapState extends State<GoogleMap> {
     final List<Marker> newMarkers = widget.markers;
     final MarkerUpdates update = MarkerUpdates.from(_markers, newMarkers);
     if (update.isNotEmpty) {
-      _controller?._updateMarkers(update);
+      _controller!._updateMarkers(update);
     }
     _markers = newMarkers;
   }
@@ -381,7 +381,7 @@ class _GoogleMapState extends State<GoogleMap> {
         PolygonUpdates.from(_polygons.values.toSet(), widget.polygons);
     // ignore: unawaited_futures
     if (update.isNotEmpty) {
-      _controller?._updatePolygons(update);
+      _controller!._updatePolygons(update);
     }
     _polygons = keyByPolygonId(widget.polygons);
   }
@@ -392,7 +392,7 @@ class _GoogleMapState extends State<GoogleMap> {
     final PolylineUpdates update = PolylineUpdates.from(_polylines, keyedPolylines);
     if (update.isNotEmpty) {
       // ignore: unawaited_futures
-      _controller?._updatePolylines(update);
+      _controller!._updatePolylines(update);
     }
     _polylines = keyedPolylines;
   }
@@ -402,7 +402,7 @@ class _GoogleMapState extends State<GoogleMap> {
     final CircleUpdates update = CircleUpdates.from(_circles.values.toSet(), widget.circles);
     if (update.isNotEmpty) {
       // ignore: unawaited_futures
-      _controller?._updateCircles(update);
+      _controller!._updateCircles(update);
     }
     _circles = keyByCircleId(widget.circles);
   }
@@ -410,7 +410,7 @@ class _GoogleMapState extends State<GoogleMap> {
   void _updateTileOverlays(GoogleMap? oldWidget) {
     // ignore: unawaited_futures
     if (oldWidget?.tileOverlays != widget.tileOverlays) {
-      _controller?._updateTileOverlays(widget.tileOverlays);
+      _controller!._updateTileOverlays(widget.tileOverlays);
     }
   }
 
