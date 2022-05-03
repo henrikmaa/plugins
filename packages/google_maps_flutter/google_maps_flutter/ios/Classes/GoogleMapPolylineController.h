@@ -12,6 +12,7 @@
 - (void)setColor:(UIColor *)color;
 - (void)setStrokeWidth:(CGFloat)width;
 - (void)setPoints:(NSArray<CLLocation *> *)points;
+- (void)setStampStyle:(UIImage *)icon;
 - (void)setZIndex:(int)zIndex;
 - (void)setGeodesic:(BOOL)isGeodesic;
 @end

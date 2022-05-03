@@ -34,6 +34,15 @@
 - (void)setVisible:(BOOL)visible {
   _polyline.map = visible ? _mapView : nil;
 }
+
+- (void)setStampStyle:(UIImage *)icon {
+    GMSTextureStyle *stampStyle = [GMSTextureStyle textureStyleWithImage:icon];
+    GMSStrokeStyle *strokeStyle = [GMSStrokeStyle solidColor:[UIColor clearColor]];
+    strokeStyle.stampStyle = stampStyle;
+    NSArray *spans = @[[GMSStyleSpan spanWithStyle:strokeStyle]];
+    _polyline.spans = spans;
+}
+
 - (void)setZIndex:(int)zIndex {
   _polyline.zIndex = zIndex;
 }
@@ -79,6 +88,12 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
   if (visible != nil) {
     [sink setVisible:ToBool(visible)];
   }
+
+    NSArray *icon = data[@"iosStampStyle"];
+    if (icon) {
+        UIImage *image = ExtractIcon(registrar, icon);
+        [sink setIcon:image];
+    }
 
   NSNumber *zIndex = data[@"zIndex"];
   if (zIndex != nil) {
