@@ -197,7 +197,7 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
     }
   } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
     if (iconData.count == 3) {
-        NSString imageName = [registrar lookupKeyForAsset:iconData[1]];
+        NSString *imageName = [registrar lookupKeyForAsset:iconData[1]];
         if([imageName isEqual:cachedImageName]){
             image = cachedImage;
         } else {
