@@ -177,8 +177,8 @@ static UIImage *scaleImage(UIImage *image, NSNumber *scaleParam) {
   return image;
 }
 
-static NSString cachedImageName;
-static UIImage cachedImage;
+static NSString *cachedImageName;
+static UIImage *cachedImage;
 
 static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray *iconData) {
   UIImage *image;
