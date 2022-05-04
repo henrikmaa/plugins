@@ -177,6 +177,9 @@ static UIImage *scaleImage(UIImage *image, NSNumber *scaleParam) {
   return image;
 }
 
+static NSString cachedImageName;
+static UIImage cachedImage;
+
 static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray *iconData) {
   UIImage *image;
   if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
@@ -194,9 +197,16 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
     }
   } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
     if (iconData.count == 3) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-      NSNumber *scaleParam = iconData[2];
-      image = scaleImage(image, scaleParam);
+        NSString imageName = [registrar lookupKeyForAsset:iconData[1]];
+        if([imageName isEqual:cachedImageName]){
+            image = cachedImage;
+        } else {
+            image = [UIImage imageNamed:imageName];
+            NSNumber *scaleParam = iconData[2];
+            image = scaleImage(image, scaleParam);
+            cachedImage = image;
+            cachedImageName = imageName;
+        }
     } else {
       NSString *error =
           [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
