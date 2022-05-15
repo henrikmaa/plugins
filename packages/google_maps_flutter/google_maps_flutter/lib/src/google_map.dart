@@ -297,6 +297,10 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   _GoogleMapOptions? _googleMapOptions;
 
+  final _MessagingSampler _markerSampler = _MessagingSampler();
+  final _MessagingSampler _polylineSampler = _MessagingSampler();
+  final _MessagingSampler _circleSampler = _MessagingSampler();
+
   @override
   Widget build(BuildContext context) {
     return GoogleMapsFlutterPlatform.instance.buildViewWithTextDirection(
@@ -332,21 +336,22 @@ class _GoogleMapState extends State<GoogleMap> {
   @override
   void didUpdateWidget(GoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(_controller != null) {
+    if (_controller != null) {
       _updateOptions();
+
       if (widget.markers != oldWidget.markers) {
-        _updateMarkers();
+        _markerSampler.submit(_updateMarkers);
       }
       if (widget.polygons != oldWidget.polygons) {
         _updatePolygons();
       }
-      if(widget.polylines != oldWidget.polylines) {
-        _updatePolylines();
+      if (widget.polylines != oldWidget.polylines) {
+        _polylineSampler.submit(_updatePolylines);
       }
-      if(widget.circles != oldWidget.circles) {
-        _updateCircles();
+      if (widget.circles != oldWidget.circles) {
+        _circleSampler.submit(_updateCircles);
       }
-      if(widget.tileOverlays != oldWidget.tileOverlays) {
+      if (widget.tileOverlays != oldWidget.tileOverlays) {
         _updateTileOverlays(oldWidget);
       }
     }
@@ -364,15 +369,17 @@ class _GoogleMapState extends State<GoogleMap> {
     _googleMapOptions = newOptions;
   }
 
-  void _updateMarkers() {
+  Future<void>? _updateMarkers() {
     assert(_controller != null);
     // ignore: unawaited_futures
     final List<Marker> newMarkers = widget.markers;
     final MarkerUpdates update = MarkerUpdates.from(_markers, newMarkers);
-    if (update.isNotEmpty) {
-      _controller!._updateMarkers(update);
-    }
     _markers = newMarkers;
+    if (update.isNotEmpty) {
+      return _controller!._updateMarkers(update);
+    } else {
+      return null;
+    }
   }
 
   void _updatePolygons() {
@@ -386,25 +393,30 @@ class _GoogleMapState extends State<GoogleMap> {
     _polygons = keyByPolygonId(widget.polygons);
   }
 
-  void _updatePolylines() {
+  Future<void>? _updatePolylines() {
     assert(_controller != null);
-    final Map<PolylineId, Polyline> keyedPolylines = keyByPolylineId(widget.polylines);
-    final PolylineUpdates update = PolylineUpdates.from(_polylines, keyedPolylines);
-    if (update.isNotEmpty) {
-      // ignore: unawaited_futures
-      _controller!._updatePolylines(update);
-    }
+    final Map<PolylineId, Polyline> keyedPolylines =
+        keyByPolylineId(widget.polylines);
+    final PolylineUpdates update =
+        PolylineUpdates.from(_polylines, keyedPolylines);
     _polylines = keyedPolylines;
+    if (update.isNotEmpty) {
+      return _controller!._updatePolylines(update);
+    } else {
+      return null;
+    }
   }
 
-  void _updateCircles() {
+  Future<void>? _updateCircles() {
     assert(_controller != null);
-    final CircleUpdates update = CircleUpdates.from(_circles.values.toSet(), widget.circles);
-    if (update.isNotEmpty) {
-      // ignore: unawaited_futures
-      _controller!._updateCircles(update);
-    }
+    final CircleUpdates update =
+        CircleUpdates.from(_circles.values.toSet(), widget.circles);
     _circles = keyByCircleId(widget.circles);
+    if (update.isNotEmpty) {
+      return _controller!._updateCircles(update);
+    } else {
+      return null;
+    }
   }
 
   void _updateTileOverlays(GoogleMap? oldWidget) {
@@ -414,7 +426,7 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
-  void _clearCaches(){
+  void _clearCaches() {
     _polygons = {};
     _polylines = {};
     _circles = {};
@@ -429,7 +441,7 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
 
-    if(!mounted){
+    if (!mounted) {
       controller.dispose();
       return;
     }
@@ -451,8 +463,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerTap(MarkerId markerId) {
     assert(markerId != null);
-    final Marker? marker =
-        _markers.lastWhereOrNull((Marker element) => element.markerId == markerId);
+    final Marker? marker = _markers
+        .lastWhereOrNull((Marker element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onTap');
     }
@@ -464,8 +476,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDragStart(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker =
-        _markers.lastWhereOrNull((Marker element) => element.markerId == markerId);
+    final Marker? marker = _markers
+        .lastWhereOrNull((Marker element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragStart');
     }
@@ -477,8 +489,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDrag(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker =
-        _markers.lastWhereOrNull((Marker element) => element.markerId == markerId);
+    final Marker? marker = _markers
+        .lastWhereOrNull((Marker element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDrag');
     }
@@ -490,8 +502,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onMarkerDragEnd(MarkerId markerId, LatLng position) {
     assert(markerId != null);
-    final Marker? marker =
-        _markers.lastWhereOrNull((Marker element) => element.markerId == markerId);
+    final Marker? marker = _markers
+        .lastWhereOrNull((Marker element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragEnd');
     }
@@ -539,8 +551,8 @@ class _GoogleMapState extends State<GoogleMap> {
 
   void onInfoWindowTap(MarkerId markerId) {
     assert(markerId != null);
-    final Marker? marker =
-        _markers.lastWhereOrNull((Marker element) => element.markerId == markerId);
+    final Marker? marker = _markers
+        .lastWhereOrNull((Marker element) => element.markerId == markerId);
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'InfoWindow onTap');
     }
@@ -563,6 +575,40 @@ class _GoogleMapState extends State<GoogleMap> {
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);
+    }
+  }
+}
+
+class _MessagingSampler {
+  bool _working = false;
+  Future<void>? Function()? _pendingJobBuilder;
+
+  void submit(Future<void>? Function() jobBuilder) {
+    if (_working) {
+      _pendingJobBuilder = jobBuilder;
+    } else {
+      _start(jobBuilder());
+    }
+  }
+
+  void _start(Future<void>? job) {
+    assert(!_working);
+
+    if (job == null) {
+      return;
+    }
+
+    _working = true;
+    job.whenComplete(_onJobComplete);
+  }
+
+  void _onJobComplete() {
+    _working = false;
+
+    final Future<void>? Function()? pending = _pendingJobBuilder;
+    if (pending != null) {
+      _pendingJobBuilder = null;
+      _start(pending());
     }
   }
 }
