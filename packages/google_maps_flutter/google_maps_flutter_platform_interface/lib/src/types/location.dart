@@ -31,6 +31,8 @@ class LatLng {
 
   /// Converts this object to something serializable in JSON.
   Object toJson() {
+    assert(!latitude.isNaN, "Tried to serialize NaN latitude");
+    assert(!longitude.isNaN, "Tried to serialize NaN longitude");
     return <double>[latitude, longitude];
   }
 

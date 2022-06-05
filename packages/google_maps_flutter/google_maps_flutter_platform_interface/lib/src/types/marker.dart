@@ -270,6 +270,9 @@ class Marker implements MapsObject {
       }
     }
 
+    assert(!position.latitude.isNaN, "Marker has position.latitude NaN");
+    assert(!position.longitude.isNaN, "Marker has position.longitude NaN");
+
     final typedPrevious = previous as Marker?;
 
     addIfPresent('markerId', markerId.value);
