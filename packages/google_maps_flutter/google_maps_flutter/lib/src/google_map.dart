@@ -109,7 +109,7 @@ class GoogleMap extends StatefulWidget {
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
     this.buildingsEnabled = true,
-    this.markers = const [],
+    this.markers = const <Marker>[],
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
@@ -603,6 +603,10 @@ class _MessagingSampler {
   }
 
   void _onJobComplete() {
+    Timer(const Duration(milliseconds: 16), _handleCooldownCompleted);
+  }
+
+  void _handleCooldownCompleted() {
     _working = false;
 
     final Future<void>? Function()? pending = _pendingJobBuilder;
