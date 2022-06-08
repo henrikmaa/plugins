@@ -603,10 +603,6 @@ class _MessagingSampler {
   }
 
   void _onJobComplete() {
-    Timer(const Duration(milliseconds: 16), _handleCooldownCompleted);
-  }
-
-  void _handleCooldownCompleted() {
     _working = false;
 
     final Future<void>? Function()? pending = _pendingJobBuilder;
