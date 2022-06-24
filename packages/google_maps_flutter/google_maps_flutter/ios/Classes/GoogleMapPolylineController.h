@@ -4,6 +4,7 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import "JsonConversions.h"
 
 // Defines polyline UI options writable from Flutter.
 @protocol FLTGoogleMapPolylineOptionsSink
@@ -15,6 +16,7 @@
 - (void)setStampStyle:(UIImage * _Nonnull)image;
 - (void)setZIndex:(int)zIndex;
 - (void)setGeodesic:(BOOL)isGeodesic;
+- (void)setPattern:(NSArray<FLTPolylinePattern*>*)pattern;
 @end
 
 // Defines polyline controllable by Flutter.
@@ -24,6 +26,7 @@
                           polylineId:(NSString *)polylineId
                              mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
+- (void)redraw;
 @end
 
 @interface FLTPolylinesController : NSObject
@@ -35,4 +38,5 @@
 - (void)removePolylineIds:(NSArray *)polylineIdsToRemove;
 - (void)onPolylineTap:(NSString *)polylineId;
 - (bool)hasPolylineWithId:(NSString *)polylineId;
+- (void)redrawPolylines;
 @end

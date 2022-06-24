@@ -10,6 +10,7 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
 @implementation FLTGoogleMapPolylineController {
   GMSPolyline *_polyline;
   GMSMapView *_mapView;
+  NSArray<FLTPolylinePattern*>* _pattern;
 }
 - (instancetype)initPolylineWithPath:(GMSMutablePath *)path
                           polylineId:(NSString *)polylineId
@@ -24,8 +25,37 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
   return self;
 }
 
+- (void)redraw {
+  if (_pattern != nil) {
+    [self setPattern:_pattern];
+  }
+}
+
 - (void)removePolyline {
   _polyline.map = nil;
+}
+
+- (void)setPattern:(NSArray<FLTPolylinePattern*>*)pattern {
+    _pattern = pattern;
+    NSMutableArray* styles = [[NSMutableArray alloc] init];
+    NSMutableArray* lengths = [[NSMutableArray alloc] init];
+
+    double scale = 1.0 / [_mapView.projection pointsForMeters:1 atCoordinate:_mapView.camera.target];
+
+    for (FLTPolylinePattern* patternItem in _pattern) {
+        NSString* patternType = patternItem.patternType;
+        if ([patternType isEqualToString:@"dash"]) {
+          [styles addObject:[GMSStrokeStyle solidColor:_polyline.strokeColor]];
+          [lengths addObject:[NSNumber numberWithDouble:scale * patternItem.length]];
+        } else if ([patternType isEqualToString:@"gap"]) {
+          [styles addObject:[GMSStrokeStyle solidColor:[UIColor clearColor]]];
+          [lengths addObject:[NSNumber numberWithDouble:scale * patternItem.length]];
+        } else if ([patternType isEqualToString:@"dot"]) {
+          [styles addObject:[GMSStrokeStyle solidColor:_polyline.strokeColor]];
+          [lengths addObject:[NSNumber numberWithDouble:scale * _polyline.strokeWidth]];
+        }
+    }
+    _polyline.spans = GMSStyleSpans(_polyline.path, styles, lengths, kGMSLengthRhumb);
 }
 
 #pragma mark - FLTGoogleMapPolylineOptionsSink methods
@@ -62,12 +92,20 @@ static UIImage *ExtractIcon(NSObject<FlutterPluginRegistrar> *registrar, NSArray
 }
 - (void)setStrokeWidth:(CGFloat)width {
   _polyline.strokeWidth = width;
+
+  if (_pattern != nil) {
+        [self setPattern:_pattern];
+  }
 }
 
 - (void)setGeodesic:(BOOL)isGeodesic {
   _polyline.geodesic = isGeodesic;
 }
 @end
+
+static NSArray<FLTPolylinePattern*>* ToPattern(NSArray* data) {
+  return [FLTGoogleMapJsonConversions toPattern:data];
+}
 
 static int ToInt(NSNumber *data) { return [FLTGoogleMapJsonConversions toInt:data]; }
 
@@ -105,6 +143,11 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
   NSArray *points = data[@"points"];
   if (points) {
     [sink setPoints:ToPoints(points)];
+  }
+
+  NSArray* pattern = data[@"pattern"];
+  if (pattern) {
+    [sink setPattern:ToPattern(pattern)];
   }
 
   NSNumber *strokeColor = data[@"color"];
@@ -153,6 +196,13 @@ static void InterpretPolylineOptions(NSDictionary *data, id<FLTGoogleMapPolyline
     _polylineIdToController[polylineId] = controller;
   }
 }
+
+- (void)redrawPolylines {
+  for (FLTGoogleMapPolylineController* controller in _polylineIdToController.allValues) {
+    [controller redraw];
+  }
+}
+
 - (void)changePolylines:(NSArray *)polylinesToChange {
   for (NSDictionary *polyline in polylinesToChange) {
     NSString *polylineId = [FLTPolylinesController getPolylineId:polyline];

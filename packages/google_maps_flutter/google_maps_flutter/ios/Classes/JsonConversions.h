@@ -5,6 +5,14 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+@interface FLTPolylinePattern : NSObject
+
+@property(strong, nonatomic) NSString* patternType;
+@property(nonatomic) double length;
+
+- (instancetype)init:(NSString*)patternType length:(double)length;
+@end
+
 @interface FLTGoogleMapJsonConversions : NSObject
 + (bool)toBool:(NSNumber *)data;
 + (int)toInt:(NSNumber *)data;
@@ -16,4 +24,6 @@
 + (UIColor *)toColor:(NSNumber *)data;
 + (NSArray<CLLocation *> *)toPoints:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)toHoles:(NSArray *)data;
++ (NSArray<FLTPolylinePattern*>*)toPattern:(NSArray*)data;
++ (NSArray<NSArray<CLLocation*>*>*)toHoles:(NSArray*)data;
 @end

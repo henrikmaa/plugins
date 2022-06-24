@@ -290,8 +290,8 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                               : () => _changeJointType(selectedId),
                         ),
                         TextButton(
-                          child: const Text('change pattern [Android only]'),
-                          onPressed: isIOS || (selectedId == null)
+                          child: const Text('change pattern'),
+                          onPressed: (selectedId == null)
                               ? null
                               : () => _changePattern(selectedId),
                         ),
